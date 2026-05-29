@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1060" height="660" viewBox="0 0 1060 660"
+     xmlns="http://www.w3.org/2000/svg"
+     font-family="Arial, sans-serif" font-size="12">
+
+  <style>
+    .lbl  { font-size: 11px; fill: #111; }
+    .val  { font-size: 10px; fill: #555; }
+    .pin  { font-size: 10px; fill: #111; }
+    .head { font-size: 14px; font-weight: bold; fill: #111; }
+    .note { font-size: 10px; fill: #666; font-style: italic; }
+    line  { stroke-linecap: round; stroke-linejoin: round; }
+  </style>
+
+  <!-- ── background ── -->
+  <rect width="1060" height="660" fill="white"/>
+  <rect x="8" y="8" width="1044" height="644" fill="none" stroke="#bbb" stroke-width="1"/>
+
+  <!-- ── title ── -->
+  <text x="530" y="34" text-anchor="middle" class="head">CV Tap Tempo Mod — schemat ideowy (jeden pedał)</text>
+
+  <!-- ════════════════════════════════════════
+       SHARED DEFINITIONS (inline, reused by translate)
+       ════════════════════════════════════════ -->
+
+  <!-- ── GND symbol macro (centered at 0,0 → translate to place) ── -->
+  <!-- used inline below -->
+
+  <!-- ════════════════════════════════════════
+       A/B PATH  (y baseline = 180)
+       ════════════════════════════════════════ -->
+
+  <!-- Jack A (y=140) -->
+  <circle cx="68" cy="140" r="14" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="68" y="136" text-anchor="middle" class="pin">●</text>
+  <text x="54" y="125" class="lbl">CV A</text>
+  <text x="54" y="137" class="val">jack</text>
+  <!-- sleeve GND -->
+  <line x1="68" y1="154" x2="68" y2="174" stroke="black" stroke-width="1.5"/>
+  <line x1="57" y1="174" x2="79" y2="174" stroke="black" stroke-width="2"/>
+  <line x1="61" y1="180" x2="75" y2="180" stroke="black" stroke-width="2"/>
+  <line x1="65" y1="186" x2="71" y2="186" stroke="black" stroke-width="2"/>
+  <!-- tip wire right -->
+  <line x1="82" y1="140" x2="160" y2="140" stroke="black" stroke-width="1.5"/>
+
+  <!-- Jack B (y=260) -->
+  <circle cx="68" cy="260" r="14" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="68" y="256" text-anchor="middle" class="pin">●</text>
+  <text x="54" y="245" class="lbl">CV B</text>
+  <text x="54" y="257" class="val">jack</text>
+  <line x1="68" y1="274" x2="68" y2="294" stroke="black" stroke-width="1.5"/>
+  <line x1="57" y1="294" x2="79" y2="294" stroke="black" stroke-width="2"/>
+  <line x1="61" y1="300" x2="75" y2="300" stroke="black" stroke-width="2"/>
+  <line x1="65" y1="306" x2="71" y2="306" stroke="black" stroke-width="2"/>
+  <line x1="82" y1="260" x2="160" y2="260" stroke="black" stroke-width="1.5"/>
+
+  <!-- SELECT switch (3-pos ON/OFF/ON)
+       contacts at (160,140) and (160,260), common at (220,200) -->
+  <circle cx="160" cy="140" r="3.5" fill="black"/>
+  <circle cx="160" cy="260" r="3.5" fill="black"/>
+  <circle cx="220" cy="200" r="3.5" fill="black"/>
+  <!-- blade A (solid = active side) -->
+  <line x1="160" y1="140" x2="218" y2="200" stroke="black" stroke-width="1.5"/>
+  <!-- blade B (dashed = inactive) -->
+  <line x1="160" y1="260" x2="218" y2="200" stroke="black" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <!-- label -->
+  <text x="130" y="206" text-anchor="end" class="lbl">SELECT</text>
+  <text x="130" y="218" text-anchor="end" class="val">A/OFF/B</text>
+
+  <!-- common wire right from SELECT to HP section -->
+  <line x1="220" y1="200" x2="290" y2="200" stroke="black" stroke-width="1.5"/>
+
+  <!-- ── HP filter section (x: 290–430) ──
+       SW_HP bypass runs above at y=158
+       C1 in main path at y=200 -->
+
+  <!-- node before C1 / bypass start -->
+  <circle cx="290" cy="200" r="4" fill="black"/>
+  <!-- wire up to bypass path -->
+  <line x1="290" y1="200" x2="290" y2="162" stroke="black" stroke-width="1.5"/>
+
+  <!-- SW_HP bypass switch at y=158 -->
+  <line x1="290" y1="162" x2="340" y2="162" stroke="black" stroke-width="1.5"/>
+  <!-- open switch contacts -->
+  <circle cx="340" cy="162" r="3.5" fill="none" stroke="black" stroke-width="1.5"/>
+  <circle cx="368" cy="162" r="3.5" fill="none" stroke="black" stroke-width="1.5"/>
+  <line x1="372" y1="162" x2="430" y2="162" stroke="black" stroke-width="1.5"/>
+  <line x1="430" y1="162" x2="430" y2="200" stroke="black" stroke-width="1.5"/>
+  <!-- SW_HP label -->
+  <text x="354" y="150" text-anchor="middle" class="lbl">SW_HP</text>
+  <text x="354" y="140" text-anchor="middle" class="val">bypass (norm. open)</text>
+
+  <!-- C1 (0.1µF) in main path at y=200 -->
+  <line x1="290" y1="200" x2="356" y2="200" stroke="black" stroke-width="1.5"/>
+  <!-- capacitor plates -->
+  <line x1="356" y1="184" x2="356" y2="216" stroke="black" stroke-width="2.5"/>
+  <line x1="364" y1="184" x2="364" y2="216" stroke="black" stroke-width="2.5"/>
+  <line x1="364" y1="200" x2="430" y2="200" stroke="black" stroke-width="1.5"/>
+  <!-- C1 label above -->
+  <text x="360" y="178" text-anchor="middle" class="lbl">C1</text>
+  <text x="360" y="168" text-anchor="middle" class="val">0.1µF</text>
+
+  <!-- node_AB after C1 / bypass join -->
+  <circle cx="430" cy="200" r="4" fill="black"/>
+
+  <!-- R1 shunt 10kΩ to GND -->
+  <line x1="430" y1="200" x2="430" y2="224" stroke="black" stroke-width="1.5"/>
+  <rect x="416" y="224" width="28" height="46" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="430" y="241" text-anchor="middle" class="val" font-size="9">R1</text>
+  <text x="430" y="253" text-anchor="middle" class="val" font-size="9">10kΩ</text>
+  <line x1="430" y1="270" x2="430" y2="296" stroke="black" stroke-width="1.5"/>
+  <!-- GND symbol -->
+  <line x1="416" y1="296" x2="444" y2="296" stroke="black" stroke-width="2"/>
+  <line x1="420" y1="303" x2="440" y2="303" stroke="black" stroke-width="2"/>
+  <line x1="424" y1="310" x2="436" y2="310" stroke="black" stroke-width="2"/>
+  <text x="430" y="325" text-anchor="middle" class="val">GND</text>
+
+  <!-- R2 (1kΩ) from node_AB to TR1 base -->
+  <line x1="430" y1="200" x2="470" y2="200" stroke="black" stroke-width="1.5"/>
+  <rect x="470" y="187" width="50" height="26" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="495" y="197" text-anchor="middle" class="val" font-size="9">R2  1kΩ</text>
+  <text x="495" y="208" text-anchor="middle" class="val" font-size="9">base limit</text>
+  <line x1="520" y1="200" x2="558" y2="200" stroke="black" stroke-width="1.5"/>
+
+  <!-- ── TR1 (BC547)  center (610, 200) ── -->
+  <!-- vertical bar -->
+  <line x1="558" y1="172" x2="558" y2="228" stroke="black" stroke-width="2.5"/>
+  <!-- base wire (already drawn above) -->
+  <!-- collector (up-right) -->
+  <line x1="558" y1="182" x2="598" y2="148" stroke="black" stroke-width="1.5"/>
+  <!-- emitter (down-right) with arrow -->
+  <line x1="558" y1="218" x2="598" y2="252" stroke="black" stroke-width="1.5"/>
+  <!-- arrow on emitter -->
+  <polygon points="584,242 598,252 590,254" fill="black"/>
+  <!-- circle -->
+  <circle cx="568" cy="200" r="30" fill="none" stroke="black" stroke-width="1.5"/>
+  <!-- labels -->
+  <text x="540" y="196" text-anchor="end" class="pin">B</text>
+  <text x="602" y="146" class="pin">C</text>
+  <text x="602" y="258" class="pin">E</text>
+  <text x="606" y="200" class="lbl">TR1</text>
+  <text x="606" y="212" class="val">BC547</text>
+
+  <!-- emitter TR1 to GND -->
+  <line x1="598" y1="252" x2="640" y2="252" stroke="black" stroke-width="1.5"/>
+  <line x1="640" y1="252" x2="640" y2="316" stroke="black" stroke-width="1.5"/>
+  <line x1="626" y1="316" x2="654" y2="316" stroke="black" stroke-width="2"/>
+  <line x1="630" y1="323" x2="650" y2="323" stroke="black" stroke-width="2"/>
+  <line x1="634" y1="330" x2="646" y2="330" stroke="black" stroke-width="2"/>
+  <text x="640" y="345" text-anchor="middle" class="val">GND</text>
+
+  <!-- ════════════════════════════════════════
+       C PATH  (y baseline = 450)
+       ════════════════════════════════════════ -->
+
+  <!-- Jack C -->
+  <circle cx="68" cy="450" r="14" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="68" y="446" text-anchor="middle" class="pin">●</text>
+  <text x="54" y="435" class="lbl">CV C</text>
+  <text x="54" y="447" class="val">jack</text>
+  <line x1="68" y1="464" x2="68" y2="484" stroke="black" stroke-width="1.5"/>
+  <line x1="57" y1="484" x2="79" y2="484" stroke="black" stroke-width="2"/>
+  <line x1="61" y1="490" x2="75" y2="490" stroke="black" stroke-width="2"/>
+  <line x1="65" y1="496" x2="71" y2="496" stroke="black" stroke-width="2"/>
+  <line x1="82" y1="450" x2="130" y2="450" stroke="black" stroke-width="1.5"/>
+
+  <!-- C2 (0.1µF) always in path -->
+  <!-- cap plates -->
+  <line x1="130" y1="434" x2="130" y2="466" stroke="black" stroke-width="2.5"/>
+  <line x1="138" y1="434" x2="138" y2="466" stroke="black" stroke-width="2.5"/>
+  <line x1="138" y1="450" x2="200" y2="450" stroke="black" stroke-width="1.5"/>
+  <text x="130" y="428" text-anchor="middle" class="lbl">C2</text>
+  <text x="130" y="418" text-anchor="middle" class="val">0.1µF</text>
+
+  <!-- node_C -->
+  <circle cx="200" cy="450" r="4" fill="black"/>
+
+  <!-- R3 (10kΩ) shunt to GND -->
+  <line x1="200" y1="450" x2="200" y2="474" stroke="black" stroke-width="1.5"/>
+  <rect x="186" y="474" width="28" height="46" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="200" y="491" text-anchor="middle" class="val" font-size="9">R3</text>
+  <text x="200" y="503" text-anchor="middle" class="val" font-size="9">10kΩ</text>
+  <line x1="200" y1="520" x2="200" y2="546" stroke="black" stroke-width="1.5"/>
+  <line x1="186" y1="546" x2="214" y2="546" stroke="black" stroke-width="2"/>
+  <line x1="190" y1="553" x2="210" y2="553" stroke="black" stroke-width="2"/>
+  <line x1="194" y1="560" x2="206" y2="560" stroke="black" stroke-width="2"/>
+  <text x="200" y="575" text-anchor="middle" class="val">GND</text>
+
+  <!-- R4 (1kΩ) from node_C to TR2 base -->
+  <line x1="200" y1="450" x2="240" y2="450" stroke="black" stroke-width="1.5"/>
+  <rect x="240" y="437" width="50" height="26" fill="white" stroke="black" stroke-width="1.5"/>
+  <text x="265" y="447" text-anchor="middle" class="val" font-size="9">R4  1kΩ</text>
+  <text x="265" y="458" text-anchor="middle" class="val" font-size="9">base limit</text>
+  <line x1="290" y1="450" x2="528" y2="450" stroke="black" stroke-width="1.5"/>
+
+  <!-- ── TR2 (BC547)  center (580, 450) ── -->
+  <line x1="528" y1="422" x2="528" y2="478" stroke="black" stroke-width="2.5"/>
+  <line x1="528" y1="432" x2="568" y2="398" stroke="black" stroke-width="1.5"/>
+  <line x1="528" y1="468" x2="568" y2="502" stroke="black" stroke-width="1.5"/>
+  <polygon points="554,492 568,502 560,504" fill="black"/>
+  <circle cx="538" cy="450" r="30" fill="none" stroke="black" stroke-width="1.5"/>
+  <text x="510" y="446" text-anchor="end" class="pin">B</text>
+  <text x="572" y="396" class="pin">C</text>
+  <text x="572" y="508" class="pin">E</text>
+  <text x="576" y="450" class="lbl">TR2</text>
+  <text x="576" y="462" class="val">BC547</text>
+
+  <!-- emitter TR2 to GND -->
+  <line x1="568" y1="502" x2="640" y2="502" stroke="black" stroke-width="1.5"/>
+  <line x1="640" y1="502" x2="640" y2="566" stroke="black" stroke-width="1.5"/>
+  <line x1="626" y1="566" x2="654" y2="566" stroke="black" stroke-width="2"/>
+  <line x1="630" y1="573" x2="650" y2="573" stroke="black" stroke-width="2"/>
+  <line x1="634" y1="580" x2="646" y2="580" stroke="black" stroke-width="2"/>
+  <text x="640" y="595" text-anchor="middle" class="val">GND</text>
+
+  <!-- ════════════════════════════════════════
+       COLLECTOR JOIN → tap_pin
+       ════════════════════════════════════════ -->
+
+  <!-- TR1 collector wire right -->
+  <line x1="598" y1="148" x2="750" y2="148" stroke="black" stroke-width="1.5"/>
+  <!-- TR2 collector wire right -->
+  <line x1="568" y1="398" x2="750" y2="398" stroke="black" stroke-width="1.5"/>
+  <!-- vertical join line -->
+  <line x1="750" y1="148" x2="750" y2="398" stroke="black" stroke-width="1.5"/>
+  <!-- junction dots -->
+  <circle cx="750" cy="148" r="4" fill="black"/>
+  <circle cx="750" cy="398" r="4" fill="black"/>
+  <!-- tap_pin node -->
+  <circle cx="750" cy="273" r="4" fill="black"/>
+  <!-- wire to tap_pin output box -->
+  <line x1="750" y1="273" x2="840" y2="273" stroke="black" stroke-width="1.5"/>
+
+  <!-- tap_pin output box -->
+  <rect x="840" y="253" width="110" height="40" fill="#eef4ff" stroke="#3366cc" stroke-width="2" rx="5"/>
+  <text x="895" y="270" text-anchor="middle" class="lbl" font-weight="bold">tap_pin</text>
+  <text x="895" y="284" text-anchor="middle" class="val">PCB pedału (~3.3V)</text>
+
+  <!-- ── REC switch below tap_pin ── -->
+  <line x1="895" y1="293" x2="895" y2="348" stroke="black" stroke-width="1.5"/>
+  <!-- switch contacts (open) -->
+  <circle cx="895" cy="348" r="3.5" fill="none" stroke="black" stroke-width="1.5"/>
+  <circle cx="895" cy="376" r="3.5" fill="none" stroke="black" stroke-width="1.5"/>
+  <line x1="895" y1="380" x2="895" y2="430" stroke="black" stroke-width="1.5"/>
+  <!-- REC switch label -->
+  <text x="910" y="362" class="lbl">REC</text>
+  <text x="910" y="374" class="val">ON/OFF</text>
+  <!-- GND below REC -->
+  <line x1="881" y1="430" x2="909" y2="430" stroke="black" stroke-width="2"/>
+  <line x1="885" y1="437" x2="905" y2="437" stroke="black" stroke-width="2"/>
+  <line x1="889" y1="444" x2="901" y2="444" stroke="black" stroke-width="2"/>
+  <text x="895" y="458" text-anchor="middle" class="val">GND</text>
+
+  <!-- ── GND connection from pedal to circuit (note) ── -->
+  <rect x="840" y="482" width="190" height="36" fill="#fffff0" stroke="#999" stroke-width="1" rx="3"/>
+  <text x="935" y="496" text-anchor="middle" class="val">GND pedału = GND obwodu</text>
+  <text x="935" y="510" text-anchor="middle" class="val">(wspólna masa)</text>
+
+  <!-- ── section labels / boxes ── -->
+  <!-- A/B input box -->
+  <rect x="26" y="115" width="244" height="164" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="6,3" rx="4"/>
+  <text x="34" y="112" class="val" fill="#888">wejścia A / B + SELECT</text>
+
+  <!-- C input box -->
+  <rect x="26" y="425" width="320" height="82" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="6,3" rx="4"/>
+  <text x="34" y="422" class="val" fill="#888">wejście C (zawsze aktywne)</text>
+
+  <!-- HP filter box -->
+  <rect x="276" y="144" width="170" height="200" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="6,3" rx="4"/>
+  <text x="284" y="141" class="val" fill="#888">filtr HP (fc ≈ 160 Hz)</text>
+
+  <!-- ════════════════════════════════════════
+       NOTES
+       ════════════════════════════════════════ -->
+  <line x1="20" y1="620" x2="1040" y2="620" stroke="#ccc" stroke-width="1"/>
+  <text x="26" y="636" class="note">SW_HP: normalnie otwarty → filtr HP aktywny; po zwarciu → sygnał omija C1 (bypass)</text>
+  <text x="26" y="649" class="note">REC: zwarcie tap_pin bezpośrednio do GND = symulacja przytrzymania przycisku tap (tryb loopera w SMMH)</text>
+
+</svg>

@@ -29,6 +29,10 @@ Oraz trzy przełączniki:
 
 ---
 
+## Schemat ideowy
+
+![Schemat](schematic.svg)
+
 ## Zasada działania
 
 Przycisk tap w obu pedałach to pin MCU trzymany na ~3.3V, zwarcie do GND = wciśnięcie. Obwód używa tranzystorów NPN (BC547) do symulowania tego zwarcia. Filtr HP (RC: 0.1µF + 10kΩ, f_c ≈ 160 Hz, τ ≈ 1ms) skraca długie gate'y do krótkich impulsów, zapobiegając przypadkowemu wejściu pedału w tryb loopera.
