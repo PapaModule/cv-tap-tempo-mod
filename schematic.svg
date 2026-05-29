@@ -117,6 +117,26 @@
   <line x1="536" y1="200" x2="566" y2="200" stroke="black" stroke-width="2"/>
 
   <!-- ═══════════════════
+       D1 (1N4148) — klamp bazy TR1
+       ═══════════════════ -->
+  <!-- junction na drut bazowy -->
+  <circle cx="548" cy="200" r="5" fill="black"/>
+  <!-- drut w dół -->
+  <line x1="548" y1="200" x2="548" y2="208" stroke="black" stroke-width="2"/>
+  <!-- katoda bar -->
+  <line x1="537" y1="208" x2="559" y2="208" stroke="black" stroke-width="2.5"/>
+  <!-- trójkąt diody (wierzchołek u góry = katoda, podstawa na dole = anoda) -->
+  <polygon points="548,208 539,226 557,226" fill="black"/>
+  <!-- drut od anody do GND -->
+  <line x1="548" y1="226" x2="548" y2="256" stroke="black" stroke-width="2"/>
+  <line x1="535" y1="256" x2="561" y2="256" stroke="black" stroke-width="2.5"/>
+  <line x1="540" y1="264" x2="556" y2="264" stroke="black" stroke-width="2.5"/>
+  <line x1="545" y1="272" x2="551" y2="272" stroke="black" stroke-width="2.5"/>
+  <!-- etykieta -->
+  <text x="564" y="215" class="val">D1</text>
+  <text x="564" y="227" class="val">1N4148</text>
+
+  <!-- ═══════════════════
        TR1 (BC547) — centrum (620, 200)
        ═══════════════════ -->
   <!-- pionowy pasek bazy -->
@@ -190,6 +210,20 @@
   <text x="277" y="458" text-anchor="middle" class="val">R4</text>
   <text x="277" y="470" text-anchor="middle" class="val">1kΩ</text>
   <line x1="304" y1="460" x2="536" y2="460" stroke="black" stroke-width="2"/>
+
+  <!-- ═══════════════════
+       D2 (1N4148) — klamp bazy TR2
+       ═══════════════════ -->
+  <circle cx="490" cy="460" r="5" fill="black"/>
+  <line x1="490" y1="460" x2="490" y2="468" stroke="black" stroke-width="2"/>
+  <line x1="479" y1="468" x2="501" y2="468" stroke="black" stroke-width="2.5"/>
+  <polygon points="490,468 481,486 499,486" fill="black"/>
+  <line x1="490" y1="486" x2="490" y2="516" stroke="black" stroke-width="2"/>
+  <line x1="477" y1="516" x2="503" y2="516" stroke="black" stroke-width="2.5"/>
+  <line x1="482" y1="524" x2="498" y2="524" stroke="black" stroke-width="2.5"/>
+  <line x1="487" y1="532" x2="493" y2="532" stroke="black" stroke-width="2.5"/>
+  <text x="506" y="475" class="val">D2</text>
+  <text x="506" y="487" class="val">1N4148</text>
 
   <!-- ═══════════════════
        TR2 (BC547) — centrum (590, 460)
@@ -284,11 +318,7 @@
        PRZYPISY
        ═══════════════════════════════════════ -->
   <line x1="20" y1="634" x2="1080" y2="634" stroke="#ddd" stroke-width="1"/>
-  <text x="26" y="650" class="note">
-    SW_HP: norm. otwarty = filtr HP aktywny (gate skracany do ~1ms);  zwarty = bypass (sygnał CV bezpośrednio do bazy)
-  </text>
-  <text x="26" y="666" class="note">
-    REC: zwarcie tap_pin → GND = symulacja przytrzymania przycisku tap  (tryb loopera w SMMH)
-  </text>
+  <text x="26" y="650" class="note">SW_HP: norm. otwarty = filtr HP aktywny (gate skracany do ~1ms);  zwarty = bypass (sygnał CV bezpośrednio do bazy)</text>
+  <text x="26" y="664" class="note">D1/D2 (1N4148): katoda → baza TR, anoda → GND — klampuje ujemny spike filtra HP do −0.7V (ochrona Vebo BC547 = 6V)</text>
 
 </svg>

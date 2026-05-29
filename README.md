@@ -38,11 +38,13 @@ Oraz trzy przełączniki:
 Przycisk tap w obu pedałach to pin MCU trzymany na ~3.3V, zwarcie do GND = wciśnięcie. Obwód używa tranzystorów NPN (BC547) do symulowania tego zwarcia. Filtr HP (RC: 0.1µF + 10kΩ, f_c ≈ 160 Hz, τ ≈ 1ms) skraca długie gate'y do krótkich impulsów, zapobiegając przypadkowemu wejściu pedału w tryb loopera.
 
 ```
-CV ──[0.1µF]──┬──[1kΩ]──── B ┐
-             [10kΩ]           │ BC547
-              │               C ──── tap_pin pedału
-             GND              E ──── GND
+CV ──[0.1µF]──┬──[1kΩ]──┬── B ┐
+             [10kΩ]    [D: 1N4148]  │ BC547
+              │           │         C ──── tap_pin pedału
+             GND         GND        E ──── GND
 ```
+
+Dioda 1N4148 (katoda do bazy, anoda do GND) chroni tranzystor przed ujemnym spikiem generowanym przez kondensator filtra HP przy opadającym zboczu gate'a (limit Vebo = 6V, spike może sięgnąć −10V).
 
 ---
 
@@ -51,6 +53,7 @@ CV ──[0.1µF]──┬──[1kΩ]──── B ┐
 | Element | Wartość | Ilość |
 |---|---|---|
 | Tranzystor NPN | BC547B lub 2N3904 | 2 |
+| Dioda małosygnałowa | 1N4148 | 2 |
 | Rezystor | 10kΩ, 1/4W | 2 |
 | Rezystor | 1kΩ, 1/4W | 2 |
 | Kondensator filmowy | 0.1µF (WIMA MKS2 lub ekw.) | 2 |

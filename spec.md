@@ -48,16 +48,19 @@ Przycisk tap w obu pedałach działa identycznie: pin MCU trzymany wysoko (~3.3V
 
 ```
 CV_A ──┐
-       ├──[SELECT A/OFF/B]──┬──[0.1µF]──┬──[1kΩ]──baza TR1 ──┐
-CV_B ──┘                   │           [10kΩ]                   │
-                     [SW_HP bypass]      │                       │
-                           │            GND                      ├──► tap_pin pedału
-                           └────────────┘ (bypass: SW_HP zwarty)│
-                                                                 │
-CV_C ──[0.1µF]──┬──[1kΩ]──────────────────────────baza TR2 ──┘
-               [10kΩ]
-                │
-               GND
+       ├──[SELECT A/OFF/B]──┬──[0.1µF]──┬──[1kΩ]──┬──baza TR1 ──┐
+CV_B ──┘                   │           [10kΩ]     [D1]            │
+                     [SW_HP bypass]      │           │             │
+                           │            GND         GND           ├──► tap_pin pedału
+                           └────────────┘                         │
+                                                                   │
+CV_C ──[0.1µF]──┬──[1kΩ]──┬──────────────────────baza TR2 ──────┘
+               [10kΩ]     [D2]
+                │           │
+               GND         GND
+
+D1, D2: 1N4148 — katoda do bazy tranzystora, anoda do GND
+        (klampuje ujemny spike filtra HP do −0.7V, chroni Vebo = 6V BC547)
 
 REC switch ──────────────────────────────────────────────────────► tap_pin (zwarcie)
 
@@ -78,6 +81,7 @@ TR1, TR2: kolektor → tap_pin | emiter → GND pedału
 | Element | Wartość | Ilość |
 |---|---|---|
 | Tranzystor NPN | BC547 (lub 2N3904) | 2 |
+| Dioda | 1N4148 | 2 |
 | Rezystor | 10kΩ | 2 |
 | Rezystor | 1kΩ | 2 |
 | Kondensator filmowy | 0.1µF | 2 |
@@ -105,7 +109,7 @@ TR1, TR2: kolektor → tap_pin | emiter → GND pedału
 - **SMMH:** potwierdzone — tap działa jak Cathedral (zwarcie tap_pin do GND)
 - **Cathedral:** potwierdzone — tap_pin siedzi na 3.3V, wciśnięcie zwiera do GND
 - Tranzystor nie łączy CV z tap_pin (izolacja przez topologię — CV tylko na bazie)
-- Diody klampujące pominięte — zbędne przy tej topologii
+- D1/D2 (1N4148): klampują ujemny spike filtra HP do −0.7V — ochrona Vebo tranzystora (limit 6V, spike może sięgnąć −10V przy 10V Eurorack systemach)
 - Brak izolacji galwanicznej (GND modulara = GND pedału) — akceptowalne; w razie problemów z humem zastąpić BC547 optoizolatorem PC817
 
 ---
