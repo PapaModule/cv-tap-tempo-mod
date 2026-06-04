@@ -1,6 +1,7 @@
 # CV Tap Tempo Mod — EHX SMMH + EHX Cathedral
 
 **Data:** 2026-05-29  
+**Aktualizacja:** 2026-06-04 — izolacja galwaniczna (BC547 → PC817)  
 **Status:** Zatwierdzone
 
 ---
@@ -21,7 +22,7 @@ Dwa osobne, identyczne obwody — jeden na pedał. Każdy montowany na płytce p
 
 ### Zasada działania
 
-Przycisk tap w obu pedałach działa identycznie: pin MCU trzymany wysoko (~3.3V), wciśnięcie przycisku zwiera go do GND. Obwód symuluje to zwarcie przez tranzystor NPN sterowany sygnałem CV.
+Przycisk tap w obu pedałach działa identycznie: pin MCU trzymany wysoko (~3.3V), wciśnięcie przycisku zwiera go do GND. Obwód symuluje to zwarcie przez optoizolator PC817 sterowany sygnałem CV. GND modulara i GND pedału są galwanicznie odizolowane — brak ryzyka pętli masy.
 
 ---
 
@@ -40,39 +41,47 @@ Przycisk tap w obu pedałach działa identycznie: pin MCU trzymany wysoko (~3.3V
 
 ### Przełącznik REC
 - 2-pozycyjny ON/OFF
-- Bezpośrednie zwarcie tap_pin do GND — symuluje przytrzymanie przycisku (przydatne w trybie loopera SMMH)
+- Bezpośrednie zwarcie tap_pin do GND_pedału — symuluje przytrzymanie przycisku (przydatne w trybie loopera SMMH)
 
 ---
 
 ## Schemat obwodu
 
 ```
-CV_A ──┐
-       ├──[SELECT A/OFF/B]──┬──[0.1µF]──┬──[1kΩ]──┬──baza TR1 ──┐
-CV_B ──┘                   │           [10kΩ]     [D1]            │
-                     [SW_HP bypass]      │           │             │
-                           │            GND         GND           ├──► tap_pin pedału
-                           └────────────┘                         │
-                                                                   │
-CV_C ──[0.1µF]──┬──[1kΩ]──┬──────────────────────baza TR2 ──────┘
-               [10kΩ]     [D2]
-                │           │
-               GND         GND
+─────────────────── STRONA MODULARA (GND_mod) ──────────┬── STRONA PEDAŁU (GND_ped) ───
+                                                         │ (izolacja galwaniczna PC817)
+CV_A ──┐                                                 │
+       ├──[SELECT A/OFF/B]──┬──[0.1µF]──┬──[470Ω]──[D1]──LED(+)[OC1]LED(−)──GND_mod
+CV_B ──┘              [SW_HP bypass]   [10kΩ]                 fototranz. C ──► tap_pin
+                            │            │                     fototranz. E ──── GND_ped
+                            └────────────┘
+                                GND_mod
 
-D1, D2: 1N4148 — katoda do bazy tranzystora, anoda do GND
-        (klampuje ujemny spike filtra HP do −0.7V, chroni Vebo = 6V BC547)
+CV_C ──────────────[0.1µF]──┬──[470Ω]──[D2]──LED(+)[OC2]LED(−)──GND_mod
+                           [10kΩ]            fototranz. C ──► tap_pin
+                            │                fototranz. E ──── GND_ped
+                           GND_mod
 
-REC switch ──────────────────────────────────────────────────────► tap_pin (zwarcie)
+D1, D2: 1N4148 — antyparalel do LED (katoda D → anoda LED, anoda D → katoda LED)
+        (klampuje ujemny spike filtra HP, chroni LED przed reverse breakdown)
 
-TR1, TR2: kolektor → tap_pin | emiter → GND pedału
+REC switch ──────────────────────────────────────────────── tap_pin ──── GND_ped
+
+OC1, OC2: PC817 (DIP-4) — pin 1: LED(+), pin 2: LED(−), pin 3: E, pin 4: C
 ```
 
 ### Filtr górnoprzepustowy (HP)
-- RC: C = 0.1µF (serie) + R = 10kΩ (shunt do GND) → f_c = 1/(2π × 10k × 0.1µF) ≈ **160 Hz**
+- RC: C = 0.1µF (serie) + R = 10kΩ (shunt do GND_mod) → f_c = 1/(2π × 10k × 0.1µF) ≈ **160 Hz**
 - Stała czasowa τ ≈ 1ms: gate >5ms zostaje skrócony do ~1ms impulsu — nie może wyzwolić trybu loop
-- Przełącznik SW_HP: gdy zwarty (OFF) — sygnał CV omija kondensator, idzie prosto do bazy; gdy rozwarty (ON) — sygnał przez filtr RC
+- Przełącznik SW_HP: gdy zwarty — sygnał CV omija kondensator, idzie prosto do LED; gdy rozwarty — sygnał przez filtr RC
+- Cały filtr HP po stronie modulara — izolacja galwaniczna zachowana
 
 **Uwaga:** kondensator 0.1µF powinien być filmowy (nieelektrolityczny) ze względu na brak spolaryzowanego sygnału i małą pojemność.
+
+### Rezystor LED (470Ω)
+- Przy CV = 5V: I_LED = (5V − 1.2V) / 470Ω ≈ **8 mA** — pewne wysterowanie PC817
+- Przy CV = 10V: I_LED = (10V − 1.2V) / 470Ω ≈ **18.7 mA** — w normie (max LED PC817 = 50 mA)
+- CTR PC817 ≥ 100% przy 5 mA → fototranzystor nasyca się pewnie przy 8 mA
 
 ---
 
@@ -80,10 +89,10 @@ TR1, TR2: kolektor → tap_pin | emiter → GND pedału
 
 | Element | Wartość | Ilość |
 |---|---|---|
-| Tranzystor NPN | BC547 (lub 2N3904) | 2 |
+| Optoizolator | PC817 (DIP-4) | 2 |
 | Dioda | 1N4148 | 2 |
 | Rezystor | 10kΩ | 2 |
-| Rezystor | 1kΩ | 2 |
+| Rezystor | 470Ω | 2 |
 | Kondensator filmowy | 0.1µF | 2 |
 | Przełącznik 3-poz. ON/OFF/ON | dowolny mini toggle | 1 |
 | Przełącznik 2-poz. ON/OFF | dowolny mini toggle | 2 |
@@ -98,9 +107,10 @@ TR1, TR2: kolektor → tap_pin | emiter → GND pedału
 
 1. Wywiercić otwory w obudowie pedału na 3 gniazda 3.5mm i 3 przełączniki
 2. Zmontować obwód na perfboardzie
-3. Zlokalizować na PCB pedału punkty lutownicze przycisku tap (dwa pady: tap_pin i GND)
-4. Podłączyć kolektor TR1/TR2 do tap_pin, emiter do GND pedału
-5. Przełącznik REC bezpośrednio między tap_pin a GND
+3. Zlokalizować na PCB pedału punkty lutownicze przycisku tap (dwa pady: tap_pin i GND_ped)
+4. Podłączyć pin 4 (C) PC817 do tap_pin, pin 3 (E) do GND_pedału
+5. Pin 2 (LED−) PC817 do GND_modulara (sleeve gniazda 3.5mm)
+6. Przełącznik REC bezpośrednio między tap_pin a GND_pedału
 
 ---
 
@@ -108,16 +118,15 @@ TR1, TR2: kolektor → tap_pin | emiter → GND pedału
 
 - **SMMH:** potwierdzone — tap działa jak Cathedral (zwarcie tap_pin do GND)
 - **Cathedral:** potwierdzone — tap_pin siedzi na 3.3V, wciśnięcie zwiera do GND
-- Tranzystor nie łączy CV z tap_pin (izolacja przez topologię — CV tylko na bazie)
-- D1/D2 (1N4148): klampują ujemny spike filtra HP do −0.7V — ochrona Vebo tranzystora (limit 6V, spike może sięgnąć −10V przy 10V Eurorack systemach)
-- Brak izolacji galwanicznej (GND modulara = GND pedału) — akceptowalne; w razie problemów z humem zastąpić BC547 optoizolatorem PC817
+- PC817 zapewnia pełną izolację galwaniczną — CV nie dociera do tap_pin, GND modulara nie łączy się z GND pedału
+- D1/D2 (1N4148 antyparalel do LED): klampują ujemny spike filtra HP — chroni LED przed reverse breakdown (~5V)
+- Rezystor 470Ω: zapewnia I_LED ≈ 8 mA przy 5V CV, pewne wysterowanie fototranzystora
 
 ---
 
 ## Znane ograniczenia
 
 - **Cathedral:** podczas tapowania reverb krótko się urywa — ograniczenie firmware Cathedral, nie obwodu
-- **Brak izolacji galwanicznej** — możliwa pętla masy przy niektórych konfiguracjach rack/pedalboard
 - **REC w SMMH** wchodzi w tryb loopera — celowe, ale wymaga świadomości przy graniu
 
 ---
