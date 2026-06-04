@@ -4,9 +4,9 @@
 
 **Cel:** Zainstalować w obu pedałach obwód CV tap tempo (3 wejścia A/B/C + SELECT + HP + REC) na perfboardzie wewnątrz obudów.
 
-**Architektura:** Dwa tranzystory NPN (BC547) per pedał symulują zwarcie przycisku tap do GND. Filtr HP (RC: 0.1µF + 10kΩ) skraca gate'y do ~1ms, zapobiegając wejściu w tryb loopera. Wejścia A/B przełączane przełącznikiem SELECT (ON/OFF/ON). Wejście C zawsze aktywne.
+**Architektura:** Dwa optoizolatory PC817 (DIP-4) per pedał symulują zwarcie przycisku tap do GND z pełną izolacją galwaniczną. GND modulara (GND_mod) i GND pedału (GND_ped) nie są połączone — eliminuje pętle masy. Filtr HP (RC: 0.1µF + 10kΩ) skraca gate'y do ~1ms. Wejścia A/B przełączane przez SELECT (ON/OFF/ON). Wejście C zawsze aktywne.
 
-**Sprzęt:** multimetr, lutownica, perfboard, BC547, kondensatory filmowe 0.1µF, rezystory 10kΩ/1kΩ, mini toggle switches, gniazda 3.5mm Thonkiconn
+**Sprzęt:** multimetr, lutownica, perfboard, PC817 (DIP-4), kondensatory filmowe 0.1µF, rezystory 10kΩ/470Ω, 1N4148, mini toggle switches, gniazda 3.5mm Thonkiconn
 
 ---
 
@@ -20,9 +20,10 @@
 
   | Element | Specyfikacja | Ilość | Gdzie kupić |
   |---|---|---|---|
-  | Tranzystor NPN | BC547B lub 2N3904 | 4 szt | TME / Botland |
+  | Optoizolator | PC817 (DIP-4) | 4 szt | TME / Botland |
+  | Dioda małosygnałowa | 1N4148 | 4 szt | TME / Botland |
   | Rezystor | 10kΩ, 1/4W, metal film | 4 szt | TME / Botland |
-  | Rezystor | 1kΩ, 1/4W, metal film | 4 szt | TME / Botland |
+  | Rezystor | 470Ω, 1/4W, metal film | 4 szt | TME / Botland |
   | Kondensator filmowy | 0.1µF, 63V+ (WIMA MKS2 lub Vishay) | 4 szt | TME / Mouser |
   | Przełącznik toggle 3-poz | ON/OFF/ON, SPDT, mini, gwint 6mm | 2 szt | TME (np. SCI R13-73B) |
   | Przełącznik toggle 2-poz | ON/OFF, SPST, mini, gwint 6mm | 4 szt | TME |
@@ -31,18 +32,18 @@
   | Drut do montażu | 0.3mm izolowany, kilka kolorów | 1 zestaw | — |
   | Nakrętki M3 + podkładki | do mocowania perfboardu | 8 szt | — |
 
-- [ ] **Krok 2: Sprawdź BC547 multimetrem (test diodowy)**
+- [ ] **Krok 2: Sprawdź PC817 multimetrem (test diodowy LED)**
 
   Ustaw multimetr na tryb diodowy (symbol diody).
-  Flat side tranzystora skierowana w swoją stronę, nóżki w dół: kolejność C–B–E (lewa–środkowa–prawa).
+  PC817 DIP-4 — trzymaj chip z nacięciem po lewej stronie: piny od lewej to 1, 2, 3, 4.
 
-  - Czerwona sonda na B (środkowa), czarna na E → odczyt ~0.6–0.7V ✓
-  - Czerwona sonda na B, czarna na C → odczyt ~0.6–0.7V ✓
-  - Wszystkie inne kombinacje → OL (brak przewodzenia) ✓
+  - Czerwona sonda na pin 1 (LED+), czarna na pin 2 (LED−) → odczyt ~1.0–1.3V ✓ (dioda LED)
+  - Odwrotnie → OL (brak przewodzenia) ✓
+  - Pin 4 (C) i pin 3 (E): multimetr w trybie diodowym, czerwona na 4, czarna na 3 → OL (fototranzystor wyłączony, brak światła) ✓
 
-  Jeśli któryś tranzystor pokazuje inne wartości — wyrzuć, użyj kolejnego.
+  Jeśli LED nie przewodzi lub C–E zwarte — chip uszkodzony, wymień.
 
-- [ ] **✓ Checkpoint 1:** Wszystkie komponenty na stole, tranzystory zweryfikowane.
+- [ ] **✓ Checkpoint 1:** Wszystkie komponenty na stole, PC817 zweryfikowane.
 
 ---
 
@@ -66,11 +67,11 @@
 
   Oczekiwany wynik:
   - Jeden pad: ~3.3V (to jest **tap_pin** — pin MCU)
-  - Drugi pad: 0V (to jest **GND**)
+  - Drugi pad: 0V (to jest **GND_ped**)
 
   Przy wciśniętym przycisku tap: tap_pin spada do ~0V ✓
 
-  Zaznacz/sfotografuj który pad to tap_pin, który GND.
+  Zaznacz/sfotografuj który pad to tap_pin, który GND_ped.
 
 - [ ] **Krok 4: Zamknij SMMH tymczasowo**
 
@@ -86,13 +87,13 @@
 
 - [ ] **Krok 7: Zmierz napięcie (identycznie jak SMMH)**
 
-  Oczekiwany wynik identyczny: jeden pad ~3.3V (tap_pin), drugi 0V (GND).
+  Oczekiwany wynik identyczny: jeden pad ~3.3V (tap_pin), drugi 0V (GND_ped).
 
   Zaznacz/sfotografuj.
 
 - [ ] **Krok 8: Zamknij Cathedral tymczasowo**
 
-- [ ] **✓ Checkpoint 2:** Znasz dokładne pady tap_pin i GND w obu pedałach.
+- [ ] **✓ Checkpoint 2:** Znasz dokładne pady tap_pin i GND_ped w obu pedałach.
 
 ---
 
@@ -100,131 +101,149 @@
 
 Buduj oba pedały osobno (dwa identyczne perfboardy). Poniższy layout jest na jeden pedał.
 
+**WAŻNE:** Na perfboardzie są DWA osobne GND — nie łącz ich ze sobą:
+- **GND_mod** — masa modulara: sleeve jacków, shunt R1/R3, katoda LED PC817 (pin 2)
+- **GND_ped** — masa pedału: emiter fototranzystora PC817 (pin 3), REC switch
+
 **Schemat elektryczny do zbudowania:**
 
 ```
-                    ┌──[0.1µF C1]──────────────────┐
-SELECT_common ──────┤                              node_AB
-                    └──[SW_HP bypass]──────────────┘
-                                                    │
-                                                  [10kΩ R1]
-                                                    │
-                                                   GND
-                                                    │
-                              node_AB ──[1kΩ R2]──B─┤
-                                                    │ TR1 (BC547)
-                              tap_pin ─────────────C─┤
-                              GND ─────────────────E─┘
+─────────────── STRONA MODULARA (GND_mod) ──────────┬────── STRONA PEDAŁU (GND_ped) ──
+                                                     │ PC817 izolacja galwaniczna
+         ┌──[C1: 0.1µF]──────────────────┐           │
+SELECT ──┤                             node_AB        │
+         └──[SW_HP bypass]─────────────┘             │
+                                        │            │
+                                      [R1: 10kΩ]     │
+                                        │            │
+                                      GND_mod        │
+                                        │            │
+                    node_AB ──[R2: 470Ω]──[D1⟂]──pin1(+)[OC1]pin2(−)──GND_mod
+                                                     pin4(C) ──► tap_pin
+                                                     pin3(E) ──── GND_ped
 
-CV_C_jack ──[0.1µF C2]──────────────────────────node_C
-                                                    │
-                                                  [10kΩ R3]
-                                                    │
-                                                   GND
-                                                    │
-                              node_C ───[1kΩ R4]──B─┤
-                                                    │ TR2 (BC547)
-                              tap_pin ─────────────C─┘
-                              GND ─────────────────E─┘
+CV_C ──[C2: 0.1µF]────────────────── node_C
+                                        │
+                                      [R3: 10kΩ]
+                                        │
+                                      GND_mod
+                                        │
+                    node_C ───[R4: 470Ω]──[D2⟂]──pin1(+)[OC2]pin2(−)──GND_mod
+                                                     pin4(C) ──► tap_pin
+                                                     pin3(E) ──── GND_ped
 
-REC switch: bezpośrednio tap_pin ↔ GND (zwarcie)
+D1, D2: 1N4148 antyparalel do LED (katoda D → anoda LED, anoda D → katoda LED)
+
+REC switch: bezpośrednio tap_pin ↔ GND_ped
 ```
 
-**BC547 pinout** (flat side skierowana w twoją stronę, nóżki wskazują w dół): C – B – E (lewa–środkowa–prawa)
+**PC817 DIP-4 pinout** (nacięcie po lewej): pin1=LED+, pin2=LED−, pin3=E, pin4=C
 
 ### Layout na perfboardzie (rastrowanie 2.54mm)
 
 ```
-Kolumny:  1   2   3   4   5   6   7   8   9   10
-Rząd A:  [GND rail ─────────────────────────────]
-Rząd B:  [    ] [C1+] [C1-] [R1] [   ] [R2] [TR1-C] [TR1-B] [TR1-E→GND]
-Rząd C:  [    ] [C2+] [C2-] [R3] [   ] [R4] [TR2-C] [TR2-B] [TR2-E→GND]
-Rząd D:  [GND rail ─────────────────────────────]
+Kolumny:  1    2    3    4    5    6    7    8    9   10   11   12
+Rząd A:  [GND_mod rail ─────────────────────────────────────────]
+Rząd B:  [C1+][C1-][    ][R1↕][    ][R2→][D1⟂][OC1-12][OC1-43][    ][tap_pin drut]
+Rząd C:  [C2+][C2-][    ][R3↕][    ][R4→][D2⟂][OC2-12][OC2-43][    ][tap_pin drut]
+Rząd D:  [GND_ped rail ─────────────────────────── (tylko pin3 OC1, OC2, REC) ────]
 ```
 
-Uproszczony opis rozmieszczenia:
-- Rząd A i D: szyna GND (połączone drut na spodzie)
-- TR1 i TR2: wzdłuż rzędu B i C, kolumny 7–9
-- C1, C2: kondensatory filmowe, pionowo, kolumny 2–3
-- R1, R3 (10kΩ shunt): od node (po cap) do GND rail
-- R2, R4 (1kΩ base): od node do bazy tranzystora
+- Rząd A: szyna GND_mod (sleeve jacków, pin2 PC817, shunt R1/R3)
+- Rząd D: szyna GND_ped (pin3 emiter PC817, REC switch)
+- Szyny A i D NIE są połączone ze sobą
 
 - [ ] **Krok 1: Przygotuj perfboard**
 
-  Odetnij perfboard na ~4×5 cm (ok. 15×20 otworów). Zaznacz markerem szyny GND wzdłuż górnej i dolnej krawędzi.
+  Odetnij perfboard na ~4×5 cm (ok. 15×20 otworów). Zaznacz markerem dwie szyny: GND_mod (górna, czerwona linia) i GND_ped (dolna, czarna linia). Opisz je markerem.
 
-- [ ] **Krok 2: Wlutuj tranzystory TR1 i TR2**
+- [ ] **Krok 2: Wlutuj optoizolatory OC1 i OC2 (PC817)**
 
-  Umieść TR1 w rzędzie B (kolumny 7–9), TR2 w rzędzie C (kolumny 7–9). Flat side do siebie. Sprawdź orientację (C–B–E). Wlutuj. Nie przegrzewaj — max 3 sekundy na nóżkę.
+  Umieść OC1 w rzędzie B (kolumny 8–9), OC2 w rzędzie C (kolumny 8–9). Nacięcie chipu skierowane w lewo (pin1 na górze-lewo). Wlutuj. Nie przegrzewaj — max 3 sekundy na nóżkę.
 
-  Zmierz multimetrem: kolektor–emiter w trybie diodowym → OL (nie zwarte). ✓
+  Zmierz multimetrem: pin4(C)–pin3(E) w trybie diodowym → OL (nie zwarte, brak światła) ✓
 
 - [ ] **Krok 3: Wlutuj rezystory shunt (R1, R3 = 10kΩ)**
 
-  Pionowo. Jeden koniec: node po kapacytorze. Drugi koniec: GND rail. Przyciąć nóżki krótko.
+  Pionowo. Jeden koniec: node_AB / node_C. Drugi koniec: GND_mod rail.
 
 - [ ] **Krok 4: Wlutuj kondensatory filmowe (C1, C2 = 0.1µF)**
 
-  Filmowe są niepolarne — orientacja dowolna. Jeden koniec: wejście (od SELECT/od CV_C). Drugi: do node_AB / node_C.
+  Filmowe są niepolarne — orientacja dowolna. Jeden koniec: wejście (od SELECT / od CV_C jack). Drugi: node_AB / node_C.
 
-- [ ] **Krok 5: Wlutuj rezystory bazowe (R2, R4 = 1kΩ)**
+- [ ] **Krok 5: Wlutuj rezystory LED (R2, R4 = 470Ω)**
 
-  Od node_AB / node_C do bazy (pin środkowy) TR1/TR2.
+  Od node_AB / node_C w kierunku pin1(LED+) PC817. Między R2/R4 a pin1 wlutuj D1/D2.
 
-- [ ] **Krok 6: Połącz emitory do GND**
+- [ ] **Krok 6: Wlutuj diody D1, D2 (1N4148 antyparalel)**
 
-  Drut od E (prawa nóżka) TR1 i TR2 do GND rail.
+  Uwaga na orientację — antyparalel do LED oznacza:
+  - Katoda D (pierścień) → strona pin1 PC817 (anoda LED)
+  - Anoda D → strona R2/R4 (przed LED)
 
-- [ ] **Krok 7: Połącz kolektory — pozostaw na razie jako wolne końce drutów**
+  Dioda jest równoległa do LED, ale w odwrotnym kierunku. Gdy LED przewodzi normalnie — dioda D jest spolaryzowana zaporowo (nie przewodzi). Gdy filtr HP generuje ujemny spike — dioda D przewodzi i klampuje do −0.7V.
 
-  Drut ~10 cm od C TR1 i C TR2 — to będzie podłączone do tap_pin pedału. Oznacz (np. czerwony).
+- [ ] **Krok 7: Połącz pin2(LED−) OC1 i OC2 do GND_mod rail**
 
-  Podobnie: drut od GND rail (drugie połączenie do GND pedału). Oznacz czarny.
+  Krótki drut od pin2 obu chipów do szyny GND_mod.
 
-- [ ] **Krok 8: Wyprowadź drut od node_AB na zewnątrz**
+- [ ] **Krok 8: Połącz pin3(E) OC1 i OC2 do GND_ped rail**
 
-  To jest wejście od przełącznika SELECT (common). Drut ~10 cm, oznacz żółty.
+  Krótki drut od pin3 obu chipów do szyny GND_ped.
 
-- [ ] **Krok 9: Wyprowadź drut od node_C**
+- [ ] **Krok 9: Wyprowadź drut od pin4(C) OC1 i OC2 — zostaw jako wolne końce**
+
+  Oba kolektory połącz razem (drut między nimi) i wyprowadź jeden wspólny drut ~15 cm → to będzie tap_pin. Oznacz czerwonym.
+
+- [ ] **Krok 10: Wyprowadź drut od GND_ped rail**
+
+  Drut ~15 cm → to będzie GND_ped pedału. Oznacz czarnym.
+
+- [ ] **Krok 11: Wyprowadź drut od node_AB**
+
+  Wejście od przełącznika SELECT (common). Drut ~10 cm, oznacz żółty.
+
+- [ ] **Krok 12: Wyprowadź drut od wejścia C2 (przed kondensatorem)**
 
   Wejście z CV_C jack. Drut ~10 cm, oznacz niebieski.
 
+- [ ] **Krok 13: Wyprowadź drut od GND_mod rail**
+
+  To jest masa dla sleeve wszystkich jacków. Drut ~10 cm, oznacz zielony.
+
 - [ ] **✓ Checkpoint 3: Test wizualny**
 
-  Sprawdź pod lupą każde połączenie lutownicze: brak mostków między padami, brak zimnych spoin (matowe, kruszące się lutowie = zimna spoina — przetop).
+  Sprawdź pod lupą każde połączenie lutownicze: brak mostków, brak zimnych spoin. Sprawdź że szyna GND_mod i GND_ped nie są połączone ze sobą.
 
 ---
 
 ## Zadanie 4: Test elektryczny perfboardu (przed instalacją w pedale)
 
-- [ ] **Krok 1: Test ciągłości szyny GND**
+- [ ] **Krok 1: Test separacji GND_mod i GND_ped**
 
-  Multimetr w trybie ciągłości (sygnał dźwiękowy). Sonda na GND rail lewa → sonda na GND rail prawa → sygnał dźwiękowy ✓
+  Multimetr w trybie ciągłości. Sonda na GND_mod rail, sonda na GND_ped rail → BRAK sygnału dźwiękowego ✓ (szyny są odizolowane)
 
-- [ ] **Krok 2: Test izolacji kolektor–emiter (tranzystor wyłączony)**
+- [ ] **Krok 2: Test LED w PC817**
 
-  Ustaw DC 5V (lub użyj zasilacza 5V / baterii 4.5V).
-  Podłącz: + do kolektora TR1 przez rezystor 10kΩ (ochronny), – do emitera (GND).
-  Baza TR1: niepodłączona (lub przez 100kΩ do GND).
+  Podaj +5V przez rezystor 470Ω na pin1 OC1, minus na pin2 (GND_mod). LED powinna zaświecić (słabo widoczne w ciemności, ewentualnie sprawdź przez kamerę telefonu — podczerwień jest widoczna). ✓
 
-  Zmierz napięcie na kolektorze: powinno być ~5V (tranzystor zamknięty, prąd nie płynie) ✓
+- [ ] **Krok 3: Test przełączenia fototranzystora**
 
-- [ ] **Krok 3: Test przełączenia tranzystora**
+  Zasilaj LED OC1 jak w Kroku 2 (prąd przez LED).
+  Podłącz: + zasilacza 5V przez rezystor 10kΩ do pin4(C) OC1, minus do pin3(E) (GND_ped).
+  Zmierz napięcie na pin4(C): powinno spaść do <0.5V (fototranzystor otwarty) ✓
 
-  Podaj +5V przez rezystor 1kΩ na bazę TR1.
-  Zmierz napięcie na kolektorze: powinno spaść do <0.3V (tranzystor otwarty, zwiera kolektor do GND) ✓
+  Odłącz zasilanie LED → napięcie na pin4(C) wraca do ~5V ✓
 
-  Powtórz dla TR2.
+  Powtórz dla OC2.
 
 - [ ] **Krok 4: Test filtra HP**
 
-  Podaj wolny gate (np. 1Hz, 1V) na wejście C1. Zmierz na node_AB:
-  - Powinien pojawić się krótki impuls (~1ms) na każdym zboczu wejścia ✓
-  - (Lub sprawdź oscyloskopem jeśli dostępny — nie jest wymagany)
+  Podaj stały +5V na wejście C1 (przez wejście SELECT common, żółty drut). Zmierz napięcie na node_AB:
+  - Bezpośrednio po podaniu: ~5V → opada do 0V w ciągu ~1ms (τ = RC = 10k × 0.1µF = 1ms) ✓
+  - Po ~5ms: napięcie na node_AB ≈ 0V (kondensator naładowany, filtr blokuje DC) ✓
 
-  Alternatywnie: podaj stały +5V na wejście przez C1 → napięcie na node_AB powinno opaść do 0V po ok. 1ms (τ = RC = 10k × 0.1µF = 1ms) ✓
-
-- [ ] **✓ Checkpoint 4:** Oba tranzystory przełączają poprawnie. Filtr HP działa.
+- [ ] **✓ Checkpoint 4:** Oba optoizolatory przełączają poprawnie. Filtr HP działa. Separacja GND potwierdzona.
 
 ---
 
@@ -264,48 +283,49 @@ Wykonaj dla każdego pedału z osobna. Zacznij od SMMH.
 
   Otwórz SMMH (jak w Zadaniu 2). Na wcześniej zidentyfikowanych padach:
   - tap_pin pad: przylutuj czerwony drut ~15 cm
-  - GND pad: przylutuj czarny drut ~15 cm
+  - GND_ped pad: przylutuj czarny drut ~15 cm
 
   Użyj minimum cyny. Nie ruszaj sąsiednich komponentów.
 
 - [ ] **Krok 2: Zmontuj gniazda 3.5mm w otworach**
 
   Przykręć Thonkiconn / Cliff przez obudowę. Przylutuj:
-  - Jack A: tip → do jednej pozycji SELECT switch (np. lewa)
-  - Jack B: tip → do drugiej pozycji SELECT switch (prawa)
-  - Jack C: tip → do node_C wejścia na perfboardzie (niebieski drut)
-  - Wszystkie sleeve (masa jacka): wspólny GND
+  - Jack A tip → do lewego terminala SELECT switch
+  - Jack B tip → do prawego terminala SELECT switch
+  - Jack C tip → do wejścia C2 na perfboardzie (niebieski drut)
+  - Wszystkie sleeve (masa jacka) → zielony drut → GND_mod rail perfboardu
 
 - [ ] **Krok 3: Zmontuj przełącznik SELECT (3-poz ON/OFF/ON)**
 
   SPDT center-off. Podłącz:
   - Lewy terminal: CV_A (tip jacka A)
   - Prawy terminal: CV_B (tip jacka B)
-  - Środkowy (common): żółty drut → wejście C1 na perfboardzie (node_AB input)
+  - Środkowy (common): żółty drut → node_AB input perfboardu
 
 - [ ] **Krok 4: Zmontuj przełącznik HP (2-poz ON/OFF)**
 
-  SPST. Podłącz:
-  - Terminal 1: input C1 (wejście od SELECT common)
-  - Terminal 2: output C1 (node_AB, za kondensatorem)
-  - Gdy zwarty (ON): bypass caps filtra HP ✓
+  SPST. Podłącz równolegle do C1:
+  - Terminal 1: wejście C1 (od SELECT common, żółty drut)
+  - Terminal 2: node_AB (za kondensatorem, po stronie R1/R2)
+  - Gdy zwarty: bypass filtra HP ✓
 
 - [ ] **Krok 5: Zmontuj przełącznik REC (2-poz ON/OFF)**
 
   SPST. Podłącz bezpośrednio:
-  - Terminal 1: czerwony drut od tap_pin
-  - Terminal 2: czarny drut GND
+  - Terminal 1: czerwony drut od tap_pin SMMH
+  - Terminal 2: czarny drut GND_ped SMMH
 
-- [ ] **Krok 6: Podłącz perfboard do tap_pin i GND**
+- [ ] **Krok 6: Podłącz perfboard do pedału**
 
-  - Kolektor TR1 i TR2 (połączone razem) → czerwony drut → tap_pin SMMH
-  - GND rail perfboardu → czarny drut → GND SMMH
+  - Czerwony drut (pin4 C OC1+OC2, kolektory) → tap_pin SMMH
+  - Czarny drut (GND_ped rail) → GND_ped SMMH
+  - Zielony drut (GND_mod rail) → sleeve jacków 3.5mm **TYLKO** — NIE do GND pedału
 
 - [ ] **Krok 7: Przymocuj perfboard wewnątrz obudowy**
 
   Klej termiczny lub dystansowniki M3. Upewnij się że perfboard nie dotyka PCB SMMH.
 
-- [ ] **✓ Checkpoint 6:** SMMH złożony, wszystkie połączenia wykonane.
+- [ ] **✓ Checkpoint 6:** SMMH złożony, wszystkie połączenia wykonane. GND_mod i GND_ped nie są nigdzie połączone ze sobą.
 
 ---
 
@@ -319,14 +339,11 @@ Wykonaj dla każdego pedału z osobna. Zacznij od SMMH.
 
 - [ ] **Krok 2: Test ręczny wejścia CV**
 
-  Użyj kawałka drutu: zewrzyj tip jacka C do GND (symulacja triggera 0V→0V→0V).
-  Alternatywnie: przyłóż +3.3–5V między tip C a sleeve.
-
+  Użyj kawałka drutu: zewrzyj tip jacka C do sleeve (symulacja triggera).
   Podaj kilka krótkich zwarć (1 per sekunda) → SMMH powinien traktować je jako tap tempo. ✓
-
   Sprawdź też wejścia A i B przez przełącznik SELECT.
 
-- [ ] **Krok 3: Test z modularze (jeśli dostępny)**
+- [ ] **Krok 3: Test z modulare (jeśli dostępny)**
 
   Podłącz kabel patch z outputu gate/trigger modularze do jacka C.
   Ustaw SMMH w tryb delay. Wyślij regularny trigger (np. z sekwencera lub LFO).
@@ -337,7 +354,11 @@ Wykonaj dla każdego pedału z osobna. Zacznij od SMMH.
   Podaj stały gate (ciągłe +5V) na wejście C. SMMH nie powinien wejść w tryb loopera (filtr HP blokuje DC). ✓
   Podaj krótkie pulsy (<10ms) → normalnie triggeruje tap. ✓
 
-- [ ] **✓ Checkpoint 7:** SMMH działa poprawnie. Zamknij obudowę.
+- [ ] **Krok 5: Test izolacji (sprawdzenie braku humu)**
+
+  Podłącz SMMH do wzmacniacza. Podłącz modular przez jack C. Sprawdź czy nie pojawia się hum ani brzęczenie przy podłączonym modularie — izolacja galwaniczna PC817 powinna eliminować pętle masy. ✓
+
+- [ ] **✓ Checkpoint 7:** SMMH działa poprawnie, brak humu. Zamknij obudowę.
 
 ---
 
@@ -350,13 +371,13 @@ Identyczny przebieg jak Zadania 6–7, tylko dla Cathedral.
 - [ ] **Krok 3: Zmontuj SELECT switch** (jak Krok 3)
 - [ ] **Krok 4: Zmontuj HP switch** (jak Krok 4)
 - [ ] **Krok 5: Zmontuj REC switch** (jak Krok 5)
-- [ ] **Krok 6: Podłącz perfboard** (jak Krok 6)
+- [ ] **Krok 6: Podłącz perfboard** (jak Krok 6 — pamiętaj o separacji GND_mod / GND_ped)
 - [ ] **Krok 7: Przymocuj perfboard** (jak Krok 7)
-- [ ] **Krok 8: Test REC, test ręczny wejść A/B/C** (jak Zadanie 7, kroki 1–4)
+- [ ] **Krok 8: Test REC, test ręczny wejść A/B/C, test izolacji** (jak Zadanie 7, kroki 1–5)
 
   **Dodatkowa uwaga dla Cathedral:** podczas tapowania reverb krótko się urywa — to normalne zachowanie firmware Cathedral, nie błąd moda.
 
-- [ ] **✓ Checkpoint 8:** Cathedral działa poprawnie. Zamknij obudowę.
+- [ ] **✓ Checkpoint 8:** Cathedral działa poprawnie, brak humu. Zamknij obudowę.
 
 ---
 
@@ -364,17 +385,18 @@ Identyczny przebieg jak Zadania 6–7, tylko dla Cathedral.
 
 | Objaw | Możliwa przyczyna | Rozwiązanie |
 |---|---|---|
-| Tap w ogóle nie działa z CV | Błędna identyfikacja tap_pin/GND | Zamierz ponownie z zasilaniem; sprawdź czy tap_pin i GND nie są zamienione |
-| Hum / pętla masy | GND modulara = GND pedału (brak izolacji) | Dodaj optoizolator PC817 zamiast BC547 |
+| Tap w ogóle nie działa z CV | Błędna identyfikacja tap_pin/GND | Zamierz ponownie z zasilaniem; sprawdź czy tap_pin i GND_ped nie są zamienione |
+| Tap nie działa — LED świeci | GND_mod i GND_ped niepołączone do pedału | Sprawdź czarny drut (GND_ped rail → GND pedału) |
 | Pedał wchodzi w tryb loop przy długich gate'ach | Filtr HP nie skraca gate | Sprawdź C1 (czy filmowy, nie elektrolityczny); sprawdź node_AB |
 | Trigger działa tylko raz | Kondensator nie zdążył się rozładować | Zwiększ rezystor shunt do 47kΩ (dłuższy czas rozładowania) |
+| Hum mimo PC817 | GND_mod i GND_ped przypadkowo połączone | Sprawdź czy sleeve jacków nie jest podłączony do GND_ped |
 | SELECT switch nie przełącza | Błędne podłączenie terminali SPDT | Zamierz ciągłość między common a lewym/prawym terminalem |
 
 ---
 
 ## Źródła i referencje
 
-- [Spec projektu](../specs/2026-05-29-cv-tap-tempo-mod-design.md)
+- [spec.md](spec.md) — pełna specyfikacja projektu
 - [navs.modular.lab — More Hazarai!](http://navsmodularlab.blogspot.com/2009/08/more-hazarai-ehx-smmh-modification.html)
 - [navs.modular.lab — Even More Hazarai!](http://navsmodularlab.blogspot.com/2011/10/even-more-hazarai.html)
 - [GitHub: x37v/ehx-hazarai (KiCad)](https://github.com/x37v/ehx-hazarai)
