@@ -94,6 +94,7 @@ CV_B ──┘                        │                           │
      node_in ──[C1 0.22µF]── node_h ──[R5 47kΩ]── baza Q1   │
      node_in ──[SW_HP GATE/TRIG]── node_h  (równolegle C1)  │
      node_h ──[R1 100kΩ]── GND_mod                          │
+     node_in ──[R7 100kΩ]── GND_mod  (pull-down wejścia)    │
      baza Q1 ──[D3: katoda]  [D3: anoda]── GND_mod          │
 
 REC switch ─────────────────────────────── tap_pin ──── GND_ped
@@ -110,12 +111,12 @@ REC switch ───────────────────────
 
 | Net | Elementy |
 |---|---|
-| node_in | SELECT common (tor A/B) lub tip jacka C (tor C), R2, C1, SW_HP (tylko A/B) |
+| node_in | SELECT common (tor A/B) lub tip jacka C (tor C), R2, C1, R7, SW_HP (tylko A/B) |
 | LED+ | R2, pin1 OC1, katoda D1 |
 | LED− | pin2 OC1, anoda D1, kolektor Q1 |
 | node_h | C1, R1 (100k), R5 (47k), SW_HP (tylko A/B) |
 | baza | R5, baza Q1, katoda D3 |
-| GND_mod | emiter Q1, R1, anoda D3, sleeve wszystkich jacków |
+| GND_mod | emiter Q1, R1, R7, anoda D3, sleeve wszystkich jacków |
 | tap_pin | pin4 OC1, pin4 OC2, REC |
 | GND_ped | pin3 OC1, pin3 OC2, REC |
 
@@ -125,6 +126,7 @@ REC switch ───────────────────────
 - C1 ładuje się przez R1 i R5; po ~15–135 ms (patrz „Parametry”) prąd bazy spada, Q1 przestaje przewodzić — tap się kończy, nawet jeśli gate trwa dalej.
 - Na opadającym zboczu node_h idzie poniżej zera; D3 trzyma bazę na ~−0,7V, C1 rozładowuje się (τ ≈ 0,22 µF × 32 kΩ ≈ 7 ms) i obwód jest gotowy na następny gate.
 - Gate krótszy niż czas impulsu (np. trigger 1–10 ms) przechodzi bez zmian — LED gaśnie razem z końcem gate'a, bo traci zasilanie.
+- **R7 (pull-down 100kΩ)** ściąga wejście do 0V, gdy źródło przestaje wymuszać napięcie (odłączony przewód w teście ręcznym, wyjście modułu przez diodę, przełączenie SELECT). Bez R7 C1 zostaje naładowany i kolejny gate nie daje tapu (symulacja: 1 z 3 dotknięć); z R7 C1 rozładowuje się ze stałą czasową τ ≈ 0,22 µF × ~130 kΩ ≈ 30 ms (3 z 3 przy dotknięciach co 1 s). Wpływ na długość impulsu < 1,5%.
 
 ### Tryb GATE (SW_HP zwarty)
 
@@ -152,7 +154,7 @@ Założenia tabel nominalnych: tap aktywny, gdy prąd LED > 1 mA (PC817 nie jest
 | 0,33 µF (zapasowa) | 23–203 ms | 19–249 ms |
 | 0,47 µF (odrzucona) | 32–289 ms | 27–354 ms — przekracza 350 ms |
 
-Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
+Wartości zaokrąglone w górę (z R7 maksima są o ≤1,5% krótsze, np. 133,8 zamiast 135,3 ms). Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
 
 **Prąd LED (szczyt):**
 
@@ -196,6 +198,7 @@ Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1×
 | R2, R4 | Rezystor (LED) | 470Ω, **0,6 W** metalizowany, przewlekany (rozmiar jak 1/4 W) | 2 |
 | R5, R6 | Rezystor (baza) | 47kΩ, 1/4W, przewlekany | 2 |
 | R1, R3 | Rezystor (shunt HP) | 100kΩ, 1/4W, przewlekany | 2 |
+| R7, R8 | Rezystor (pull-down wejścia) | 100kΩ, 1/4W, przewlekany | 2 |
 | C1, C2 | Kondensator filmowy | 0.22µF, 63V+, radialny, raster 5 mm | 2 |
 | SELECT | Przełącznik 3-poz. ON/OFF/ON | SPDT mini toggle | 1 |
 | GATE/TRIG, REC | Przełącznik 2-poz. ON/OFF | SPST mini toggle | 2 |
@@ -206,7 +209,7 @@ Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1×
 
 **Łącznie na oba pedały:** ×2 każdego elementu. Zapas: 2× kondensator 0,33 µF na wypadek wymiany (patrz „Weryfikacja”).
 
-Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
+Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B (R8 w torze C odpowiada R7).
 
 **Uwaga:** kondensatory C1/C2 filmowe (niepolarne) — na node_h pojawia się napięcie ujemne przy opadającym zboczu.
 
@@ -226,7 +229,7 @@ Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
 
 ## Weryfikacja
 
-- **Tap pedałów:** tap_pin siedzi na ~3.3V, wciśnięcie zwiera do GND — do potwierdzenia pomiarem w obu pedałach (plan.md, Zadanie 2) przed montażem.
+- **Tap pedałów:** tap_pin siedzi na ~3.3V, wciśnięcie zwiera do GND — do potwierdzenia pomiarem w obu pedałach (plan.md, Zadanie 1) przed montażem.
 - **Izolacja:** PC817 zapewnia izolację galwaniczną — pod warunkiem kontroli z punktu 7 montażu.
 - **Symulacja:** wszystkie liczby z sekcji „Parametry” odtwarzane przez `sim/run.sh` (ngspice). Ograniczenia modelu: LED PC817 modelowana behawioralnie (Vf ~1,2V @ 10 mA), fototranzystor niemodelowany — próg tapu przyjęty jako I_LED > 1 mA, a wpływ niższego progu (0,1 mA) i rozrzutu hFE sprawdzony w tabeli „Rozrzut”.
 - **Testy funkcjonalne wymagane w plan.md:**

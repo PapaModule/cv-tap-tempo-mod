@@ -96,3 +96,15 @@ for MODE in TRIG GATE; do
     ngspice -b "$TMP/bip.cir" 2>&1 | awk '/^pavg/{a=$3}/^ppk/{p=$3}/^vbe_min/{b=$3}/^vled_min/{l=$3}/^iled/{i=$3} END{printf "P_R2 %5.0f / %5.0f mW  Vbe_min %6.2f V  V_LED_min %6.2f V  I_LED_max %5.1f mA\n", a*1e3, p*1e3, b, l, i*1e3}'
   done
 done
+
+echo "== v3: test ręczny - dotknięcie 5V przez 1k, puszczenie (wejście pływa), 3 dotknięcia po 1 s"
+for RIN in bez_R7 R7_100k; do
+  sed -e "s|^.param .*|.param VCV=5 RSRC=1k R2V=470 CBV=0.22u|" \
+      -e "s|^RS in a {RSRC}|SW1 in in2 ctl 0 SWM\nVCTL ctl 0 PWL(0 0 0.5 0 0.501 1 1.5 1 1.501 0 2.5 0 2.501 1 3.5 1 3.501 0 4.5 0 4.501 1 5.5 1 5.501 0 6 0)\n.model SWM SW(VT=0.5 RON=1 ROFF=1e12)\nRS in2 a {RSRC}|" \
+      -e "s|^\* __SOURCE__.*|VIN in 0 5|" \
+      -e "s|^\* __ANALYSIS__.*|.tran 50u 6\n.control\nrun\nwrdata $TMP/touch.txt i(VLsense)\n.endc|" \
+      v3_gate.cir > "$TMP/touch.cir"
+  [ "$RIN" = bez_R7 ] && sed -i.bak '/^R7 a 0 100k/d' "$TMP/touch.cir"
+  ngspice -b "$TMP/touch.cir" > /dev/null 2>&1
+  printf "%-8s: " "$RIN"; python3 analyze.py "$TMP/touch.txt"
+done

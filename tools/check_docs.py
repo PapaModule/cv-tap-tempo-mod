@@ -42,11 +42,12 @@ REQUIRED = {
         rf"0[.,]22 ?{MU}F", rf"0[.,]33 ?{MU}F", r"BC547B", r"0,6 ?W", rf"47 ?k{OHM}", rf"100 ?k{OHM}",
         r"GATE/TRIG", r"DO-35", r"DIP-4", r"5×7", r"[Mm]inimalny impuls",
         r"[Pp]róg przytrzymania", r"GND_mod", r"GND_ped", r"antyparalel",
+        r"\bR7\b", r"\bR8\b",
     ],
     "schematic.svg": [
         rf"0[.,]22 ?{MU}F", rf"470 ?{OHM}", rf"47 ?k{OHM}", rf"100 ?k{OHM}", r"BC547B",
         r"\bQ1\b", r"\bQ2\b", r"\bD3\b", r"\bD4\b", r"\bOC1\b", r"\bOC2\b",
-        r"GATE/TRIG", r"SELECT", r"REC",
+        r"GATE/TRIG", r"SELECT", r"REC", r"\bR7\b", r"\bR8\b",
     ],
 }
 

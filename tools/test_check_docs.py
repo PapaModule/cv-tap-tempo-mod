@@ -14,11 +14,11 @@ CLEAN_README = (
 CLEAN_PLAN = (
     "0.22µF 0.33µF BC547B 0,6 W 47kΩ 100kΩ GATE/TRIG DO-35 DIP-4 5×7 "
     "Minimalny impuls Próg przytrzymania GND_mod GND_ped antyparalel "
-    "rezystor 1kΩ i 10kΩ do testów\n"
+    "rezystor 1kΩ i 10kΩ do testów R7 R8\n"
 )
 CLEAN_SVG = (
     '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg">'
-    "<text>0.22µF 470Ω 47kΩ 100kΩ BC547B Q1 Q2 D3 D4 OC1 OC2 GATE/TRIG SELECT REC</text>"
+    "<text>0.22µF 470Ω 47kΩ 100kΩ BC547B Q1 Q2 D3 D4 OC1 OC2 GATE/TRIG SELECT REC R7 R8</text>"
     "</svg>\n"
 )
 
@@ -82,6 +82,12 @@ class CheckDocsTest(unittest.TestCase):
     def test_svg_label_only_in_comment_is_missing(self):
         self.write("schematic.svg", CLEAN_SVG.replace(" Q2 ", " ").replace("</svg>", "<!-- Q2 --></svg>"))
         self.assert_flagged("schematic.svg", "Q2")
+
+    def test_input_pulldown_required_in_svg_and_plan(self):
+        self.write("schematic.svg", CLEAN_SVG.replace(" R7 R8", ""))
+        self.write("plan.md", CLEAN_PLAN.replace(" R7 R8", ""))
+        self.assert_flagged("schematic.svg", "R7")
+        self.assert_flagged("plan.md", "R8")
 
     def test_svg_forbidden_value_as_entity_flagged(self):
         self.write("schematic.svg", CLEAN_SVG.replace("</svg>", "<text>0.1&#181;F</text></svg>"))
