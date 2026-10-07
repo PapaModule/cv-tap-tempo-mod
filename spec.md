@@ -42,7 +42,7 @@ Długość impulsu tap musi mieścić się między debounce MCU a progiem przytr
 | Cathedral | 350 ms | infinite reverb (wszystkie tryby poza ECHO) | manual Cathedral wg wyników wyszukiwania — **niezweryfikowane**, przyjęte jako założenie |
 
 - **Minimalna długość impulsu (debounce MCU): nieznana** — EHX jej nie publikuje. Do zmierzenia w teście „minimalny impuls” (plan.md).
-- **Cel projektowy:** impuls w trybie TRIG 20–100 ms — rząd wielkości jak w oryginale navs (filtr HP ~1–3 Hz), wyraźnie poniżej 350 ms.
+- **Cel projektowy:** impuls w trybie TRIG rzędu kilkunastu–stu kilkudziesięciu ms (jak w oryginale navs, filtr HP ~1–3 Hz), z ponad dwukrotnym zapasem poniżej 350 ms przy najgorszym rozrzucie elementów.
 
 ---
 
@@ -53,7 +53,7 @@ Długość impulsu tap musi mieścić się między debounce MCU a progiem przytr
 - Przełącznik **SELECT** (3-pozycyjny ON/OFF/ON): wybiera aktywne wejście — A, wyłączone, lub B
 - Przełącznik **GATE/TRIG** (2-pozycyjny ON/OFF, w schemacie SW_HP) dla aktywnego toru A/B:
   - **GATE** (ON, styk zwarty): tap trwa tyle, co gate — długi gate = przytrzymanie (SMMH: pętla, Cathedral: infinite)
-  - **TRIG** (OFF, styk rozwarty): każdy gate skrócony do impulsu ~19–88 ms; krótsze triggery przechodzą bez zmian
+  - **TRIG** (OFF, styk rozwarty): każdy gate skrócony do impulsu ~15–135 ms (zależnie od amplitudy CV, modułu i rozrzutu elementów); krótsze triggery przechodzą bez zmian
 - Oba wejścia mogą mieć podłączone sygnały jednocześnie bez ryzyka — SELECT fizycznie rozłącza nieaktywną gałąź
 
 ### Wejście C
@@ -122,7 +122,7 @@ REC switch ───────────────────────
 ### Jak działa filtr HP (tryb TRIG)
 
 - Narastające zbocze gate'a przechodzi przez C1 na węzeł node_h → prąd bazy przez R5 → Q1 przewodzi → LED świeci → fototranzystor zwiera tap_pin do GND_ped.
-- C1 ładuje się przez R1 i R5; po ~20–90 ms prąd bazy spada, Q1 przestaje przewodzić — tap się kończy, nawet jeśli gate trwa dalej.
+- C1 ładuje się przez R1 i R5; po ~15–135 ms (patrz „Parametry”) prąd bazy spada, Q1 przestaje przewodzić — tap się kończy, nawet jeśli gate trwa dalej.
 - Na opadającym zboczu node_h idzie poniżej zera; D3 trzyma bazę na ~−0,7V, C1 rozładowuje się (τ ≈ 0,22 µF × 32 kΩ ≈ 7 ms) i obwód jest gotowy na następny gate.
 - Gate krótszy niż czas impulsu (np. trigger 1–10 ms) przechodzi bez zmian — LED gaśnie razem z końcem gate'a, bo traci zasilanie.
 
@@ -134,15 +134,25 @@ SW_HP zwiera C1: baza dostaje prąd przez R5 przez cały czas trwania gate'a, ta
 
 ## Parametry (z symulacji ngspice, `sim/run.sh`)
 
-Założenie: tap jest aktywny, gdy prąd LED > 1 mA (PC817 nie jest modelowany — patrz „Weryfikacja”). Rs = rezystancja wyjścia modułu (typowo ~1kΩ, część modułów bez rezystora = 0Ω).
+Założenia tabel nominalnych: tap aktywny, gdy prąd LED > 1 mA (PC817 nie jest modelowany — patrz „Weryfikacja”), hFE BC547 = 400, C nominalne. Wpływ tych założeń — w tabeli „Rozrzut” niżej. Rs = rezystancja wyjścia modułu (typowo ~1kΩ, część modułów bez rezystora = 0Ω).
 
-**Długość impulsu w trybie TRIG (gate dłuższy niż impuls):**
+**Długość impulsu w trybie TRIG (gate dłuższy niż impuls), wartości nominalne:**
 
 | CV | Rs = 0Ω | Rs = 1kΩ |
 |---|---|---|
 | 5V | 19 ms | 35 ms |
 | 10V | 25 ms | 76 ms |
 | 12V | 26 ms | 88 ms |
+
+**Rozrzut — najgorsze przypadki.** Rzeczywisty próg tapu jest nieznany: zależy od prądu pull-upu MCU i CTR egzemplarza PC817, więc może być znacznie niższy niż 1 mA (niższy próg = dłuższy impuls). Wzmocnienie BC547 zależy od grupy: A ≈ 110–220, B ≈ 200–450, C ≈ 420–800. Sprawdzone: próg 1 mA i 0,1 mA, tolerancja C ±10%; minimum przy 5V / Rs=0Ω / C−10%, maksimum przy 12V / Rs=1kΩ / C+10%.
+
+| C1/C2 | BC547B (hFE 200–450) | dowolna grupa (hFE 110–800) |
+|---|---|---|
+| **0,22 µF (podstawowa)** | **15–135 ms** | 13–166 ms |
+| 0,33 µF (zapasowa) | 23–203 ms | 19–249 ms |
+| 0,47 µF (odrzucona) | 32–289 ms | 27–354 ms — przekracza 350 ms |
+
+Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
 
 **Prąd LED (szczyt):**
 
@@ -169,19 +179,21 @@ Założenie: tap jest aktywny, gdy prąd LED > 1 mA (PC817 nie jest modelowany �
 
 | Oznaczenie | Element | Wartość | Ilość |
 |---|---|---|---|
-| OC1, OC2 | Optoizolator | PC817 (DIP-4) | 2 |
-| Q1, Q2 | Tranzystor NPN | BC547 (TO-92) | 2 |
-| D1–D4 | Dioda małosygnałowa | 1N4148 | 4 |
-| R2, R4 | Rezystor (LED) | 470Ω, 1/4W | 2 |
-| R5, R6 | Rezystor (baza) | 47kΩ, 1/4W | 2 |
-| R1, R3 | Rezystor (shunt HP) | 100kΩ, 1/4W | 2 |
-| C1, C2 | Kondensator filmowy | 0.22µF, 63V+ | 2 |
+| OC1, OC2 | Optoizolator | PC817, obudowa **DIP-4** (nie PC817S / wersje SMD) | 2 |
+| Q1, Q2 | Tranzystor NPN | **BC547B**, TO-92 (A lub C też działają z 0,22 µF) | 2 |
+| D1–D4 | Dioda małosygnałowa | 1N4148, obudowa **DO-35** (szklana, przewlekana; nie SOD-123 / MiniMELF) | 4 |
+| R2, R4 | Rezystor (LED) | 470Ω, 1/4W, przewlekany | 2 |
+| R5, R6 | Rezystor (baza) | 47kΩ, 1/4W, przewlekany | 2 |
+| R1, R3 | Rezystor (shunt HP) | 100kΩ, 1/4W, przewlekany | 2 |
+| C1, C2 | Kondensator filmowy | 0.22µF, 63V+, radialny, raster 5 mm | 2 |
 | SELECT | Przełącznik 3-poz. ON/OFF/ON | SPDT mini toggle | 1 |
 | GATE/TRIG, REC | Przełącznik 2-poz. ON/OFF | SPST mini toggle | 2 |
 | — | Gniazdo 3.5mm mono, **izolowane od panelu** | Thonkiconn PJ398SM lub ekw. | 3 |
 | — | Płytka perforowana | rozmiar ustalony w plan.md po rozplanowaniu layoutu | 1 |
 
-**Łącznie na oba pedały:** ×2 każdego elementu.
+**Wszystkie elementy są przewlekane (THT) — brak SMD.** Przy zakupie pilnować oznaczeń obudów z tabeli.
+
+**Łącznie na oba pedały:** ×2 każdego elementu. Zapas: 2× kondensator 0,33 µF na wypadek wymiany (patrz „Weryfikacja”).
 
 Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
 
@@ -205,9 +217,9 @@ Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
 
 - **Tap pedałów:** tap_pin siedzi na ~3.3V, wciśnięcie zwiera do GND — do potwierdzenia pomiarem w obu pedałach (plan.md, Zadanie 2) przed montażem.
 - **Izolacja:** PC817 zapewnia izolację galwaniczną — pod warunkiem kontroli z punktu 7 montażu.
-- **Symulacja:** wszystkie liczby z sekcji „Parametry” odtwarzane przez `sim/run.sh` (ngspice). Ograniczenia modelu: LED PC817 modelowana behawioralnie (Vf ~1,2V @ 10 mA), fototranzystor niemodelowany, próg tapu przyjęty jako I_LED > 1 mA.
+- **Symulacja:** wszystkie liczby z sekcji „Parametry” odtwarzane przez `sim/run.sh` (ngspice). Ograniczenia modelu: LED PC817 modelowana behawioralnie (Vf ~1,2V @ 10 mA), fototranzystor niemodelowany — próg tapu przyjęty jako I_LED > 1 mA, a wpływ niższego progu (0,1 mA) i rozrzutu hFE sprawdzony w tabeli „Rozrzut”.
 - **Testy funkcjonalne wymagane w plan.md:**
-  - minimalny impuls: w trybie GATE najkrótszy gate rozpoznawany jako tap — wynik dopisać do sekcji „Wymagania czasowe”; jeśli przekracza ~15 ms → zwiększyć C1/C2 do 0,47 µF (impuls ~41–162 ms)
+  - minimalny impuls: w trybie GATE najkrótszy gate rozpoznawany jako tap — wynik dopisać do sekcji „Wymagania czasowe”; jeśli przekracza 10 ms → wymienić C1/C2 na 0,33 µF (impuls 23–203 ms); 0,47 µF nie stosować (może przekroczyć 350 ms)
   - próg przytrzymania: w trybie TRIG gate 3 s nie może włączyć pętli (SMMH) ani infinite (Cathedral)
   - test ręczny wejść: podanie 5V (np. zasilacz USB lub bateria 9V przez rezystor 1kΩ) na tip jacka — **nie** zwarcie tip–sleeve (strona modulara nie ma własnego zasilania)
 
@@ -218,7 +230,7 @@ Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
 - **Cathedral:** podczas tapowania reverb krótko się urywa — ograniczenie firmware Cathedral, nie obwodu
 - **REC:** w SMMH wchodzi w nagrywanie pętli, w Cathedral włącza infinite reverb — celowe, ale wymaga świadomości przy graniu
 - **Tryb GATE:** gate dłuższy niż 350 ms (Cathedral) / 0,5 s (SMMH) zadziała jak przytrzymanie — celowe
-- **Długość impulsu TRIG zależy od amplitudy CV i wyjścia modułu** (19–88 ms) — mieści się w wymaganiach dla wszystkich typowych źródeł
+- **Długość impulsu TRIG zależy od amplitudy CV, wyjścia modułu i rozrzutu elementów** (15–135 ms z BC547B) — mieści się w wymaganiach dla wszystkich typowych źródeł
 
 ---
 

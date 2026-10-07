@@ -1,7 +1,10 @@
-"""Liczy impulsy, w których prąd LED przekracza 1 mA, z pliku wrdata ngspice."""
+"""Liczy impulsy, w których prąd LED przekracza próg (domyślnie 1 mA), z pliku wrdata ngspice.
+
+Użycie: analyze.py plik [próg_w_amperach]
+"""
 import sys
 
-THRESHOLD_A = 1e-3
+THRESHOLD_A = float(sys.argv[2]) if len(sys.argv) > 2 else 1e-3
 rows = [line.split() for line in open(sys.argv[1]) if line.strip()]
 t = [float(r[0]) for r in rows]
 i = [float(r[1]) for r in rows]

@@ -55,3 +55,25 @@ for V in -5 -10 -12; do
   printf "CV=%-4s: " "$V"
   ngspice -b "$TMP/neg.cir" 2>&1 | awk '/^(vbe_min|vled_min|imod)/{printf "%s=%s  ", $1, $3} END{print ""}'
 done
+
+echo "== v3: rozrzut - hFE BC547 (110-800; grupa B = 200-450), próg tapu, tolerancja C ±10%, długi gate 1s"
+echo "   (min: 5V, Rs=0, C-10%; max: 12V, Rs=1k, C+10%)"
+for CNOM in 0.22 0.33; do
+  CMIN=$(python3 -c "print(f'{$CNOM*0.9:.4f}u')"); CMAX=$(python3 -c "print(f'{$CNOM*1.1:.4f}u')")
+  for BF in 110 200 450 800; do
+    sed -e "s/BF=400/BF=$BF/" models.inc > "$TMP/models.inc"
+    for THR in 1e-3 1e-4; do
+      for CASE in "min 5 1m $CMIN" "max 12 1k $CMAX"; do
+        set -- $CASE
+        sed -e "s|^.include .*|.include $TMP/models.inc|" \
+            -e "s|^.param .*|.param VCV=$2 RSRC=$3 R2V=470 CBV=$4|" \
+            -e "s|^\* __SOURCE__.*|VIN in 0 PWL(0 0 1m 0 1.001m {VCV} 1.001 {VCV} 1.002 0 1.1 0)|" \
+            -e "s|^\* __ANALYSIS__.*|.tran 20u 1.1\n.control\nrun\nwrdata $TMP/sw.txt i(VLsense)\n.endc|" \
+            v3_gate.cir > "$TMP/sw.cir"
+        ngspice -b "$TMP/sw.cir" > /dev/null 2>&1
+        printf "Cb=%-4su hFE=%-3s próg=%-4s %-3s: " "$CNOM" "$BF" "$THR" "$1"
+        python3 analyze.py "$TMP/sw.txt" "$THR"
+      done
+    done
+  done
+done
