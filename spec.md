@@ -171,7 +171,18 @@ Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1×
 - gate 50% przy 120 BPM i gate 90% przy 300 BPM (przerwa 20 ms) — 10/10 impulsów, 33–76 ms
 - gate 3 s w trybie TRIG — jeden impuls 35/76 ms; w trybie GATE — 3 s
 
-**Ujemne CV (np. bipolarne LFO, −5…−12V):** Vbe ≥ −0,70V, napięcie wsteczne LED ≥ −0,73V, prąd pobierany z modułu ≤ 21 mA (ograniczony przez R2). Obwód nie triggeruje i nie ulega uszkodzeniu.
+**Sygnały bipolarne do 20 Vpp (±10V) i 24 Vpp (±12V)** — LFO, oscylatory, wyjścia ±10V; sprawdzone: sinus ±10V 1 Hz i 1 kHz, prostokąt ±10V 1 kHz, prostokąt ±12V 2 Hz, stałe +12V; oba tryby; źródło 0Ω (najgorszy przypadek):
+
+| Wielkość | Najgorszy przypadek | Limit | Zapas |
+|---|---|---|---|
+| Napięcie wsteczne baza-emiter Q1 | −0,70 V (klamp D3) | 6 V | 8× |
+| Napięcie wsteczne LED PC817 | −0,73 V (klamp D1) | 6 V | 8× |
+| Prąd LED | 21 mA | 50 mA | 2,4× |
+| Moc na R2 (470Ω) | 211 mW ciągle (+12V, tryb GATE) | 600 mW (rezystor 0,6 W) | 2,8× |
+| Prąd pobierany z modułu | ≤ 21 mA (ograniczony przez R2) | — | — |
+
+- Przy ujemnym napięciu prąd płynie przez D1 i złącze baza-kolektor Q1 do D3 (ograniczony przez R2) — także w trybie TRIG, więc R2 grzeje się również przy ujemnych połówkach. Dlatego **R2/R4 = 0,6 W**: zwykły rezystor 1/4 W pracowałby na 85% mocy znamionowej.
+- Obwód nie ulega uszkodzeniu przy żadnym sygnale z zakresu ±12V (pełny zakres zasilania Eurorack).
 
 ---
 
@@ -182,7 +193,7 @@ Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1×
 | OC1, OC2 | Optoizolator | PC817, obudowa **DIP-4** (nie PC817S / wersje SMD) | 2 |
 | Q1, Q2 | Tranzystor NPN | **BC547B**, TO-92 (A lub C też działają z 0,22 µF) | 2 |
 | D1–D4 | Dioda małosygnałowa | 1N4148, obudowa **DO-35** (szklana, przewlekana; nie SOD-123 / MiniMELF) | 4 |
-| R2, R4 | Rezystor (LED) | 470Ω, 1/4W, przewlekany | 2 |
+| R2, R4 | Rezystor (LED) | 470Ω, **0,6 W** metalizowany, przewlekany (rozmiar jak 1/4 W) | 2 |
 | R5, R6 | Rezystor (baza) | 47kΩ, 1/4W, przewlekany | 2 |
 | R1, R3 | Rezystor (shunt HP) | 100kΩ, 1/4W, przewlekany | 2 |
 | C1, C2 | Kondensator filmowy | 0.22µF, 63V+, radialny, raster 5 mm | 2 |
@@ -230,6 +241,8 @@ Tor C: C2, R3, R6, R4, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B.
 - **Cathedral:** podczas tapowania reverb krótko się urywa — ograniczenie firmware Cathedral, nie obwodu
 - **REC:** w SMMH wchodzi w nagrywanie pętli, w Cathedral włącza infinite reverb — celowe, ale wymaga świadomości przy graniu
 - **Tryb GATE:** gate dłuższy niż 350 ms (Cathedral) / 0,5 s (SMMH) zadziała jak przytrzymanie — celowe
+- **Wolne LFO (sinus) w trybie TRIG:** łagodne zbocze daje słaby impuls (symulacja: prąd LED ~1,8 mA przy ±10V 1 Hz) — tap może być niepewny. Do sterowania z LFO używać trybu GATE albo sygnału prostokątnego.
+- **Obciążenie modułu:** do 21 mA przy ±12V z wyjścia bez rezystora — bezpieczne dla typowych wyjść Eurorack, ale moduł z bardzo słabym wyjściem może obniżyć napięcie.
 - **Długość impulsu TRIG zależy od amplitudy CV, wyjścia modułu i rozrzutu elementów** (15–135 ms z BC547B) — mieści się w wymaganiach dla wszystkich typowych źródeł
 
 ---

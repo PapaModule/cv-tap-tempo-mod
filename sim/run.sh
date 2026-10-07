@@ -77,3 +77,22 @@ for CNOM in 0.22 0.33; do
     done
   done
 done
+
+echo "== v3: sygnały bipolarne 20 Vpp (±10V) i 24 Vpp (±12V), źródło 0Ω (najgorszy przypadek)"
+echo "   P_R2 = moc na R2 470Ω (średnia / szczyt), Vbe_min, V_LED_min (napięcie wsteczne LED), I_LED_max"
+for MODE in TRIG GATE; do
+  if [ "$MODE" = TRIG ]; then CB=0.22u; else CB=1; fi
+  for SRC in "SIN(0 10 1)|3|LFO sinus ±10V 1Hz" \
+             "SIN(0 10 1k)|50m|sinus ±10V 1kHz" \
+             "PULSE(-10 10 0 1u 1u 0.5m 1m)|50m|prostokąt ±10V 1kHz" \
+             "PULSE(-12 12 0 1u 1u 250m 500m)|3|prostokąt ±12V 2Hz" \
+             "PWL(0 0 1m 0 1.001m 12 3 12)|3|DC +12V (stały gate)"; do
+    S=${SRC%%|*}; REST=${SRC#*|}; TSTOP=${REST%%|*}; NAME=${REST#*|}
+    sed -e "s|^.param .*|.param VCV=0 RSRC=1m R2V=470 CBV=$CB|" \
+        -e "s|^\* __SOURCE__.*|VIN in 0 $S|" \
+        -e "s|^\* __ANALYSIS__.*|.tran 20u $TSTOP\n.control\nrun\nlet pr2 = (v(a)-v(l))^2/470\nlet vled = v(l) - v(s)\nmeas tran pavg AVG pr2\nmeas tran ppk MAX pr2\nmeas tran vbe_min MIN v(b)\nmeas tran vled_min MIN vled\nmeas tran iled MAX i(VLsense)\n.endc|" \
+        v3_gate.cir > "$TMP/bip.cir"
+    printf "%-5s %-24s: " "$MODE" "$NAME"
+    ngspice -b "$TMP/bip.cir" 2>&1 | awk '/^pavg/{a=$3}/^ppk/{p=$3}/^vbe_min/{b=$3}/^vled_min/{l=$3}/^iled/{i=$3} END{printf "P_R2 %5.0f / %5.0f mW  Vbe_min %6.2f V  V_LED_min %6.2f V  I_LED_max %5.1f mA\n", a*1e3, p*1e3, b, l, i*1e3}'
+  done
+done
