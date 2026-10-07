@@ -1,0 +1,20 @@
+* v2 (spec z 2026-06-04): filtr HP C=0.1u + 10k obciążony gałęzią 470R + LED
+* Parametry: VCV (amplituda gate), RSRC (rezystancja wyjścia modułu)
+.include models.inc
+.param VCV=5 RSRC=1k
+VIN in 0 PWL(0 0 1m 0 1.001m {VCV} 51m {VCV} 51.001m 0 80m 0)
+RS in a {RSRC}
+C1 a n 0.1u
+R1 n 0 10k
+R2 n l 470
+DL l s DLED
+VLsense s 0 0
+DA 0 l D1N4148
+.tran 1u 80m
+.control
+run
+meas tran ipk MAX i(VLsense) from=0 to=50m
+meas tran t_dn WHEN i(VLsense)=1m FALL=1
+meas tran vneg MIN v(l) from=50m to=80m
+.endc
+.end

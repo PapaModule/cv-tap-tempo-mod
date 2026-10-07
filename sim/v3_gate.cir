@@ -1,0 +1,19 @@
+* v3: LED zasilana z CV przez R2, Q1 (BC547) w torze LED jako "furtka",
+* baza sterowana filtrem HP o wysokiej impedancji (Cb + 47k + 100k).
+* DH klampuje bazę (ochrona złącza B-E przed ujemnym CV i spikiem z Cb).
+* Parametry: VCV, RSRC, R2V (rezystor LED), CBV (kondensator HP), sygnał wejściowy z run.sh
+.include models.inc
+.param VCV=5 RSRC=1k R2V=470 CBV=0.22u
+* __SOURCE__ (podmieniane przez run.sh)
+RS in a {RSRC}
+R2 a l {R2V}
+DL l s DLED
+VLsense s c 0
+DA c l D1N4148
+Q1 c b 0 BC547
+CB a h {CBV}
+RPD h 0 100k
+DH 0 b D1N4148
+RB h b 47k
+* __ANALYSIS__ (podmieniane przez run.sh)
+.end

@@ -1,0 +1,14 @@
+* Kierunek diody narysowany w schematic.svg v2: anoda D na anodzie LED,
+* katoda na GND_mod (równolegle, ten sam kierunek co LED). 5V DC, HP pominięty.
+.include models.inc
+VIN n 0 5
+R2 n l 470
+DL l s DLED
+VLsense s 0 0
+DA l 0 D1N4148
+.op
+.control
+run
+print i(VLsense)
+.endc
+.end
