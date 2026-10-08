@@ -1,6 +1,6 @@
 * v3: LED zasilana z CV przez R2, Q1 (BC547) w torze LED jako "furtka",
 * baza sterowana filtrem HP o wysokiej impedancji (Cb + 47k + 100k).
-* R7 (100k) ściąga wejście do GND_mod, gdy źródło nie wymusza napięcia.
+* R7 (47k) ściąga wejście do GND_mod, gdy źródło nie wymusza napięcia.
 * DH klampuje bazę (ochrona złącza B-E przed ujemnym CV i spikiem z Cb).
 * Parametry: VCV, RSRC, R2V (rezystor LED), CBV (kondensator HP), sygnał wejściowy z run.sh
 .include models.inc
@@ -8,7 +8,7 @@
 * __SOURCE__ (podmieniane przez run.sh)
 RS in a {RSRC}
 * R7: pull-down wejścia - wejście wraca do 0V, gdy źródło puszcza (C1 się rozładowuje)
-R7 a 0 100k
+R7 a 0 47k
 R2 a l {R2V}
 DL l s DLED
 VLsense s c 0

@@ -53,7 +53,7 @@ Długość impulsu tap musi mieścić się między debounce MCU a progiem przytr
 - Przełącznik **SELECT** (3-pozycyjny ON/OFF/ON): wybiera aktywne wejście — A, wyłączone, lub B
 - Przełącznik **GATE/TRIG** (2-pozycyjny ON/OFF, w schemacie SW_HP) dla aktywnego toru A/B:
   - **GATE** (ON, styk zwarty): tap trwa tyle, co gate — długi gate = przytrzymanie (SMMH: pętla, Cathedral: infinite)
-  - **TRIG** (OFF, styk rozwarty): każdy gate skrócony do impulsu ~15–135 ms (zależnie od amplitudy CV, modułu i rozrzutu elementów); krótsze triggery przechodzą bez zmian
+  - **TRIG** (OFF, styk rozwarty): każdy gate skrócony do impulsu ~15–133 ms (zależnie od amplitudy CV, modułu i rozrzutu elementów); krótsze triggery przechodzą bez zmian
 - Oba wejścia mogą mieć podłączone sygnały jednocześnie bez ryzyka — SELECT fizycznie rozłącza nieaktywną gałąź
 
 ### Wejście C
@@ -94,7 +94,7 @@ CV_B ──┘                        │                           │
      node_in ──[C1 0.22µF]── node_h ──[R5 47kΩ]── baza Q1   │
      node_in ──[SW_HP GATE/TRIG]── node_h  (równolegle C1)  │
      node_h ──[R1 100kΩ]── GND_mod                          │
-     node_in ──[R7 100kΩ]── GND_mod  (pull-down wejścia)    │
+     node_in ──[R7 47kΩ]── GND_mod  (pull-down wejścia)     │
      baza Q1 ──[D3: katoda]  [D3: anoda]── GND_mod          │
 
 REC switch ─────────────────────────────── tap_pin ──── GND_ped
@@ -123,10 +123,10 @@ REC switch ───────────────────────
 ### Jak działa filtr HP (tryb TRIG)
 
 - Narastające zbocze gate'a przechodzi przez C1 na węzeł node_h → prąd bazy przez R5 → Q1 przewodzi → LED świeci → fototranzystor zwiera tap_pin do GND_ped.
-- C1 ładuje się przez R1 i R5; po ~15–135 ms (patrz „Parametry”) prąd bazy spada, Q1 przestaje przewodzić — tap się kończy, nawet jeśli gate trwa dalej.
+- C1 ładuje się przez R1 i R5; po ~15–133 ms (patrz „Parametry”) prąd bazy spada, Q1 przestaje przewodzić — tap się kończy, nawet jeśli gate trwa dalej.
 - Na opadającym zboczu node_h idzie poniżej zera; D3 trzyma bazę na ~−0,7V, C1 rozładowuje się (τ ≈ 0,22 µF × 32 kΩ ≈ 7 ms) i obwód jest gotowy na następny gate.
 - Gate krótszy niż czas impulsu (np. trigger 1–10 ms) przechodzi bez zmian — LED gaśnie razem z końcem gate'a, bo traci zasilanie.
-- **R7 (pull-down 100kΩ)** ściąga wejście do 0V, gdy źródło przestaje wymuszać napięcie (odłączony przewód w teście ręcznym, wyjście modułu przez diodę, przełączenie SELECT). Bez R7 C1 zostaje naładowany i kolejny gate nie daje tapu (symulacja: 1 z 3 dotknięć); z R7 C1 rozładowuje się ze stałą czasową τ ≈ 0,22 µF × ~130 kΩ ≈ 30 ms (3 z 3 przy dotknięciach co 1 s). Wpływ na długość impulsu < 1,5%.
+- **R7 (pull-down 47kΩ)** ściąga wejście do 0V, gdy źródło przestaje wymuszać napięcie (odłączony przewód w teście ręcznym, wyjście modułu przez diodę, SELECT w pozycji OFF). Bez R7 C1 zostaje naładowany i kolejny gate nie daje tapu (symulacja: 1 z 3 dotknięć); z R7 C1 rozładowuje się ze stałą czasową τ ≈ 0,22 µF × (47 kΩ + ~32 kΩ) ≈ 17 ms (3 z 3 przy 1 s dotyku i 1 s przerwy). Wyjście modułu przez diodę przy gate 90% @ 300 BPM (przerwa 20 ms): najkrótszy impuls 17,8 ms przy 5V (ze 100 kΩ było 4,3 ms — dlatego 47 kΩ). Impulsy krótsze o ≤3,5% niż bez R7; wszystkie liczby w „Parametrach” policzone już z R7.
 
 ### Tryb GATE (SW_HP zwarty)
 
@@ -142,19 +142,21 @@ Założenia tabel nominalnych: tap aktywny, gdy prąd LED > 1 mA (PC817 nie jest
 
 | CV | Rs = 0Ω | Rs = 1kΩ |
 |---|---|---|
-| 5V | 19 ms | 35 ms |
-| 10V | 25 ms | 76 ms |
-| 12V | 26 ms | 88 ms |
+| 5V | 19 ms | 34 ms |
+| 10V | 25 ms | 74 ms |
+| 12V | 26 ms | 86 ms |
 
 **Rozrzut — najgorsze przypadki.** Rzeczywisty próg tapu jest nieznany: zależy od prądu pull-upu MCU i CTR egzemplarza PC817, więc może być znacznie niższy niż 1 mA (niższy próg = dłuższy impuls). Wzmocnienie BC547 zależy od grupy: A ≈ 110–220, B ≈ 200–450, C ≈ 420–800. Sprawdzone: próg 1 mA i 0,1 mA, tolerancja C ±10%; minimum przy 5V / Rs=0Ω / C−10%, maksimum przy 12V / Rs=1kΩ / C+10%.
 
 | C1/C2 | BC547B (hFE 200–450) | dowolna grupa (hFE 110–800) |
 |---|---|---|
-| **0,22 µF (podstawowa)** | **15–135 ms** | 13–166 ms |
-| 0,33 µF (zapasowa) | 23–203 ms | 19–249 ms |
-| 0,47 µF (odrzucona) | 32–289 ms | 27–354 ms — przekracza 350 ms |
+| **0,22 µF (podstawowa)** | **15–133 ms** | 12–162 ms |
+| 0,33 µF (zapasowa) | 22–199 ms | 19–243 ms |
+| 0,47 µF (odrzucona) | 32–283 ms | 27–346 ms — praktycznie bez zapasu do 350 ms |
 
-Wartości zaokrąglone w górę (z R7 maksima są o ≤1,5% krótsze, np. 133,8 zamiast 135,3 ms). Wniosek: z 0,22 µF maksimum jest ≥2,5× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
+Wartości z `sim/run.sh` (z R7 = 47 kΩ), zaokrąglone na zewnątrz: minima w dół, maksima w górę. Wniosek: z 0,22 µF maksimum jest ≥2,6× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
+
+Prostokąt bipolarny (skok z −V na +V, a nie od 0V) daje dłuższy impuls: najgorzej 168 ms przy ±12V, Rs = 1kΩ, hFE 800, C+10%, progu 0,1 mA — nadal ≥2× poniżej 350 ms.
 
 **Prąd LED (szczyt):**
 
@@ -162,7 +164,7 @@ Wartości zaokrąglone w górę (z R7 maksima są o ≤1,5% krótsze, np. 133,8 
 |---|---|---|
 | 5V | 6,5 mA | 2,1 mA |
 | 10V | 17 mA | 5,4 mA |
-| 12V | 21 mA | 6,8 mA |
+| 12V | 21 mA | 6,7 mA |
 
 - Max prąd LED PC817 (abs. max): 50 mA — zapas wystarczający także przy 12V bez rezystora wyjściowego.
 - CTR PC817: wg datasheetu min. 50% (nierangowany, do potwierdzenia w datasheecie dostawcy) — przy 2 mA LED fototranzystor może przewodzić ≥1 mA, wielokrotnie więcej niż prąd pull-upu MCU (ułamek mA). Potwierdza to test w plan.md.
@@ -170,8 +172,9 @@ Wartości zaokrąglone w górę (z R7 maksima są o ≤1,5% krótsze, np. 133,8 
 
 **Przypadki brzegowe (Rs = 1kΩ, 5V i 10V) — wszystkie tapy rejestrowane:**
 - trigger 1 ms i 10 ms co 500 ms — przechodzą bez zmian (1 ms / 10 ms)
-- gate 50% przy 120 BPM i gate 90% przy 300 BPM (przerwa 20 ms) — 10/10 impulsów, 33–76 ms
-- gate 3 s w trybie TRIG — jeden impuls 35/76 ms; w trybie GATE — 3 s
+- gate 50% przy 120 BPM i gate 90% przy 300 BPM (przerwa 20 ms) — 10/10 impulsów, 31–75 ms
+- gate 3 s w trybie TRIG — jeden impuls 34/74 ms; w trybie GATE — 3 s
+- wyjście modułu przez diodę (nie ściąga do 0V), gate 90% @ 300 BPM — 10/10 impulsów, najkrótszy 17,8 ms (5V) / 58,9 ms (10V)
 
 **Sygnały bipolarne do 20 Vpp (±10V) i 24 Vpp (±12V)** — LFO, oscylatory, wyjścia ±10V; sprawdzone: sinus ±10V 1 Hz i 1 kHz, prostokąt ±10V 1 kHz, prostokąt ±12V 2 Hz, stałe +12V; oba tryby; źródło 0Ω (najgorszy przypadek):
 
@@ -198,7 +201,7 @@ Wartości zaokrąglone w górę (z R7 maksima są o ≤1,5% krótsze, np. 133,8 
 | R2, R4 | Rezystor (LED) | 470Ω, **0,6 W** metalizowany, przewlekany (rozmiar jak 1/4 W) | 2 |
 | R5, R6 | Rezystor (baza) | 47kΩ, 1/4W, przewlekany | 2 |
 | R1, R3 | Rezystor (shunt HP) | 100kΩ, 1/4W, przewlekany | 2 |
-| R7, R8 | Rezystor (pull-down wejścia) | 100kΩ, 1/4W, przewlekany | 2 |
+| R7, R8 | Rezystor (pull-down wejścia) | 47kΩ, 1/4W, przewlekany | 2 |
 | C1, C2 | Kondensator filmowy | 0.22µF, 63V+, radialny, raster 5 mm | 2 |
 | SELECT | Przełącznik 3-poz. ON/OFF/ON | SPDT mini toggle | 1 |
 | GATE/TRIG, REC | Przełącznik 2-poz. ON/OFF | SPST mini toggle | 2 |
@@ -221,7 +224,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 2. Zmontować obwód na perfboardzie (dwie oddzielne szyny GND_mod i GND_ped)
 3. Zlokalizować na PCB pedału punkty lutownicze przycisku tap (dwa pady: tap_pin i GND_ped)
 4. Podłączyć pin 4 (C) PC817 do tap_pin, pin 3 (E) do GND_pedału
-5. Emiter Q, R1/R3, D3/D4 i sleeve jacków do GND_modulara — **nigdy** do GND pedału
+5. Emiter Q, R1/R3, R7/R8, D3/D4 i sleeve jacków do GND_modulara — **nigdy** do GND pedału
 6. Przełącznik REC bezpośrednio między tap_pin a GND_pedału
 7. **Kontrola izolacji:** multimetr (ciągłość) między GND_mod a metalową obudową pedału → brak przejścia. Sleeve jacków i elementy strony modulara nie mogą dotykać obudowy (obudowa = GND pedału).
 
@@ -233,7 +236,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 - **Izolacja:** PC817 zapewnia izolację galwaniczną — pod warunkiem kontroli z punktu 7 montażu.
 - **Symulacja:** wszystkie liczby z sekcji „Parametry” odtwarzane przez `sim/run.sh` (ngspice). Ograniczenia modelu: LED PC817 modelowana behawioralnie (Vf ~1,2V @ 10 mA), fototranzystor niemodelowany — próg tapu przyjęty jako I_LED > 1 mA, a wpływ niższego progu (0,1 mA) i rozrzutu hFE sprawdzony w tabeli „Rozrzut”.
 - **Testy funkcjonalne wymagane w plan.md:**
-  - minimalny impuls: w trybie GATE najkrótszy gate rozpoznawany jako tap — wynik dopisać do sekcji „Wymagania czasowe”; jeśli przekracza 10 ms → wymienić C1/C2 na 0,33 µF (impuls 23–203 ms); 0,47 µF nie stosować (może przekroczyć 350 ms)
+  - minimalny impuls: w trybie GATE najkrótszy gate rozpoznawany jako tap — wynik dopisać do sekcji „Wymagania czasowe”; jeśli przekracza 10 ms → wymienić C1/C2 na 0,33 µF (impuls 22–199 ms); 0,47 µF nie stosować (praktycznie bez zapasu do 350 ms)
   - próg przytrzymania: w trybie TRIG gate 3 s nie może włączyć pętli (SMMH) ani infinite (Cathedral)
   - test ręczny wejść: podanie 5V (np. zasilacz USB lub bateria 9V przez rezystor 1kΩ) na tip jacka — **nie** zwarcie tip–sleeve (strona modulara nie ma własnego zasilania)
 
@@ -246,7 +249,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 - **Tryb GATE:** gate dłuższy niż 350 ms (Cathedral) / 0,5 s (SMMH) zadziała jak przytrzymanie — celowe
 - **Wolne LFO (sinus) w trybie TRIG:** łagodne zbocze daje słaby impuls (symulacja: prąd LED ~1,8 mA przy ±10V 1 Hz) — tap może być niepewny. Do sterowania z LFO używać trybu GATE albo sygnału prostokątnego.
 - **Obciążenie modułu:** do 21 mA przy ±12V z wyjścia bez rezystora — bezpieczne dla typowych wyjść Eurorack, ale moduł z bardzo słabym wyjściem może obniżyć napięcie.
-- **Długość impulsu TRIG zależy od amplitudy CV, wyjścia modułu i rozrzutu elementów** (15–135 ms z BC547B) — mieści się w wymaganiach dla wszystkich typowych źródeł
+- **Długość impulsu TRIG zależy od amplitudy CV, wyjścia modułu i rozrzutu elementów** (15–133 ms z BC547B) — mieści się w wymaganiach dla wszystkich typowych źródeł
 
 ---
 

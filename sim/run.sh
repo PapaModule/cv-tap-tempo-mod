@@ -58,7 +58,7 @@ done
 
 echo "== v3: rozrzut - hFE BC547 (110-800; grupa B = 200-450), próg tapu, tolerancja C ±10%, długi gate 1s"
 echo "   (min: 5V, Rs=0, C-10%; max: 12V, Rs=1k, C+10%)"
-for CNOM in 0.22 0.33; do
+for CNOM in 0.22 0.33 0.47; do
   CMIN=$(python3 -c "print(f'{$CNOM*0.9:.4f}u')"); CMAX=$(python3 -c "print(f'{$CNOM*1.1:.4f}u')")
   for BF in 110 200 450 800; do
     sed -e "s/BF=400/BF=$BF/" models.inc > "$TMP/models.inc"
@@ -97,14 +97,39 @@ for MODE in TRIG GATE; do
   done
 done
 
-echo "== v3: test ręczny - dotknięcie 5V przez 1k, puszczenie (wejście pływa), 3 dotknięcia po 1 s"
-for RIN in bez_R7 R7_100k; do
+echo "== v3: test ręczny - 3 dotknięcia 5V przez 1k (1 s dotyk, 1 s przerwy, wejście pływa po puszczeniu)"
+echo "   (bez_R7: pierwszy impuls skrócony, bo punkt pracy DC wstępnie ładuje C1 - nie wpływa na wniosek)"
+for RIN in bez_R7 R7_47k; do
   sed -e "s|^.param .*|.param VCV=5 RSRC=1k R2V=470 CBV=0.22u|" \
       -e "s|^RS in a {RSRC}|SW1 in in2 ctl 0 SWM\nVCTL ctl 0 PWL(0 0 0.5 0 0.501 1 1.5 1 1.501 0 2.5 0 2.501 1 3.5 1 3.501 0 4.5 0 4.501 1 5.5 1 5.501 0 6 0)\n.model SWM SW(VT=0.5 RON=1 ROFF=1e12)\nRS in2 a {RSRC}|" \
       -e "s|^\* __SOURCE__.*|VIN in 0 5|" \
       -e "s|^\* __ANALYSIS__.*|.tran 50u 6\n.control\nrun\nwrdata $TMP/touch.txt i(VLsense)\n.endc|" \
       v3_gate.cir > "$TMP/touch.cir"
-  [ "$RIN" = bez_R7 ] && sed -i.bak '/^R7 a 0 100k/d' "$TMP/touch.cir"
+  [ "$RIN" = bez_R7 ] && sed -i.bak '/^R7 a 0 47k/d' "$TMP/touch.cir"
   ngspice -b "$TMP/touch.cir" > /dev/null 2>&1
   printf "%-8s: " "$RIN"; python3 analyze.py "$TMP/touch.txt"
 done
+
+echo "== v3: wyjście modułu przez diodę (źródło tylko podaje prąd, nie ściąga do 0V), Rs=1k"
+for V in 5 10; do for G in "250m 500m|120BPM 50%" "180m 200m|300BPM 90%"; do
+  W=${G%%|*}; NAME=${G#*|}
+  sed -e "s|^.param .*|.param VCV=$V RSRC=1k R2V=470 CBV=0.22u|" \
+      -e "s|^RS in a {RSRC}|DSRC in in2 D1N4148\nRS in2 a {RSRC}|" \
+      -e "s|^\* __SOURCE__.*|VIN in 0 PULSE(0 {VCV} 1m 1u 1u $W)|" \
+      -e "s|^\* __ANALYSIS__.*|.tran 20u 2\n.control\nrun\nwrdata $TMP/dio.txt i(VLsense)\n.endc|" \
+      v3_gate.cir > "$TMP/dio.cir"
+  ngspice -b "$TMP/dio.cir" > /dev/null 2>&1
+  printf "CV=%-2sV %-12s: " "$V" "$NAME"; python3 analyze.py "$TMP/dio.txt"
+done; done
+
+echo "== v3: prostokąt bipolarny (skok z -V na +V), Rs=1k, najgorszy rozrzut (hFE 800, C+10%, próg 0.1mA i 1mA)"
+sed -e "s/BF=400/BF=800/" models.inc > "$TMP/models800.inc"
+for V in 10 12; do for THR in 1e-3 1e-4; do
+  sed -e "s|^.include .*|.include $TMP/models800.inc|" \
+      -e "s|^.param .*|.param VCV=$V RSRC=1k R2V=470 CBV=0.242u|" \
+      -e "s|^\* __SOURCE__.*|VIN in 0 PULSE({-VCV} {VCV} 0 1u 1u 1 2)|" \
+      -e "s|^\* __ANALYSIS__.*|.tran 20u 4\n.control\nrun\nwrdata $TMP/bsq.txt i(VLsense)\n.endc|" \
+      v3_gate.cir > "$TMP/bsq.cir"
+  ngspice -b "$TMP/bsq.cir" > /dev/null 2>&1
+  printf "±%-2sV 0.25Hz próg=%-4s: " "$V" "$THR"; python3 analyze.py "$TMP/bsq.txt" "$THR"
+done; done

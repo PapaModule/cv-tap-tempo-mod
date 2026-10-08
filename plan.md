@@ -5,10 +5,10 @@
 
 **Cel:** zainstalować w obu pedałach obwód CV tap tempo (wejścia A/B/C, przełączniki SELECT, GATE/TRIG, REC).
 
-**Sprzęt:** multimetr z testem diod, lutownica, oscyloskop, zasilacz USB 5V z przewodem do testów (moduł „USB breakout” albo przecięty kabel USB: czerwony = +5V, czarny = minus) lub bateria 9V, rezystor 1kΩ i 10kΩ do testów, kabelki z krokodylkami, kabel patch 3.5mm.
+**Sprzęt:** multimetr z testem diod, lutownica, oscyloskop, zasilacz USB 5V z przewodem do testów (moduł „USB breakout” albo przecięty kabel USB: czerwony = +5V, czarny = minus — sprawdź multimetrem, że +5V jest na czerwonym) lub bateria 9V, rezystor 1kΩ i 10kΩ do testów, kabelki z krokodylkami, kabel patch 3.5mm.
 
 **Ważne zasady:**
-- Na perfboardzie są dwie masy: **GND_mod** (modular) i **GND_ped** (pedał). W pedale nigdy ich nie łącz (jedyny wyjątek: test na stole w Zadaniu 4, Krok 3 — opisany wprost).
+- Na perfboardzie są dwie masy: **GND_mod** (modular) i **GND_ped** (pedał). W pedale nigdy ich nie łącz (jedyny wyjątek: test na stole w Zadaniu 4, Kroki 3–5 — opisany wprost).
 - Diody: **pasek na obudowie = katoda**.
 - PC817: **kropka lub wcięcie = pin 1**. Piny liczone przeciwnie do ruchu wskazówek zegara: 1 (lewy górny), 2 (lewy dolny), 3 (prawy dolny), 4 (prawy górny).
 - Test ciągłości: „piknięcie” = połączone, „brak piknięcia” = rozłączone.
@@ -77,8 +77,8 @@
 | Tranzystor NPN | **BC547B**, TO-92 | 4 + 1 zapas |
 | Dioda | 1N4148, **DO-35** (szklana, przewlekana) | 8 + 2 zapas |
 | Rezystor | 470Ω, **0,6 W**, metalizowany | 4 |
-| Rezystor | 47kΩ, 0,6 W lub 1/4 W, metalizowany | 4 |
-| Rezystor | 100kΩ, 0,6 W lub 1/4 W, metalizowany | 8 |
+| Rezystor | 47kΩ, 0,6 W lub 1/4 W, metalizowany | 8 |
+| Rezystor | 100kΩ, 0,6 W lub 1/4 W, metalizowany | 4 |
 | Kondensator filmowy | 0.22µF, 63V+, radialny, raster 5 mm | 4 |
 | Kondensator filmowy (zapas) | 0.33µF, 63V+, radialny, raster 5 mm | 4 |
 | Przełącznik toggle | ON/OFF/ON, SPDT, mini, gwint 6 mm | 2 |
@@ -114,7 +114,7 @@
   - z dwóch pozostałych: ta z **nieco wyższym** odczytem to **emiter (E)**, druga to **kolektor (C)**. Różnica bywa tylko kilka mV — mierz uważnie, po dwa razy.
   - każde inne ustawienie sond → OL
 
-  Jeśli multimetr ma gniazdo **hFE** (NPN): włóż tranzystor zgodnie z ustalonym E-B-C → odczyt zwykle **150–450** ✓ (multimetr mierzy przy małym prądzie, więc wynik bywa niższy niż w katalogu). Odczyt < 30 → C i E zamienione; odwróć i sprawdź ponownie.
+  Jeśli multimetr ma gniazdo **hFE** (NPN): włóż tranzystor zgodnie z ustalonym E-B-C → odczyt zwykle **150–450** ✓ (multimetr mierzy przy małym prądzie, więc wynik bywa niższy niż w katalogu; więcej niż 450 też jest OK — ważne, że wyraźnie > 30). Odczyt < 30 → C i E zamienione; odwróć i sprawdź ponownie.
 
   Zapisz wynik na kawałku taśmy przyklejonym do tranzystora (np. „E B C” patrząc na płaską stronę, nóżkami w dół).
   Jeśli żadna nóżka nie przewodzi do obu pozostałych → tranzystor PNP lub uszkodzony — odłóż.
@@ -165,7 +165,7 @@ Budujesz dwa identyczne perfboardy (jeden na pedał). Na każdym są dwa tory: *
 | baza (C) | druga nóżka R6, **baza** Q2, **katoda** D4 (pasek) | |
 | GND_mod | **emiter** Q2, druga nóżka R3, druga nóżka R8, **anoda** D4 (bez paska) | szyna GND_mod |
 
-Elementy: R1, R3, R7, R8 = 100kΩ · R5, R6 = 47kΩ · R2, R4 = 470Ω 0,6 W · C1, C2 = 0.22µF · D1–D4 = 1N4148 · Q1, Q2 = BC547B · OC1, OC2 = PC817.
+Elementy: R1, R3 = 100kΩ · R5, R6, R7, R8 = 47kΩ · R2, R4 = 470Ω 0,6 W · C1, C2 = 0.22µF · D1–D4 = 1N4148 · Q1, Q2 = BC547B · OC1, OC2 = PC817.
 
 - [ ] **Krok 1: Przygotuj perfboard**
 
@@ -208,7 +208,7 @@ Elementy: R1, R3, R7, R8 = 100kΩ · R5, R6 = 47kΩ · R2, R4 = 470Ω 0,6 W · C
 
   (Pomiar w drugą stronę nic nie rozstrzyga — przewodzi wtedy złącze baza-emiter tranzystora.)
 
-- [ ] **Krok 7: Wlutuj R5, R6 (47kΩ), R1, R3, R7, R8 (100kΩ) i C1, C2 (0.22µF)**
+- [ ] **Krok 7: Wlutuj R5, R6, R7, R8 (47kΩ), R1, R3 (100kΩ) i C1, C2 (0.22µF)**
 
   - R5: baza Q1 ↔ node_h. R1: node_h ↔ GND_mod. C1: in_AB ↔ node_h (kondensator filmowy — orientacja dowolna). R7: in_AB ↔ GND_mod.
   - Tor C: R6: baza Q2 ↔ node_h (C). R3: node_h (C) ↔ GND_mod. C2: in_C ↔ node_h (C). R8: in_C ↔ GND_mod.
@@ -248,14 +248,14 @@ Elementy: R1, R3, R7, R8 = 100kΩ · R5, R6 = 47kΩ · R2, R4 = 470Ω 0,6 W · C
   - Strona pedału: +5V przez rezystor 10kΩ do pin 4 OC1.
   - Oscyloskop: sonda na pin 4, masa sondy na minusie zasilacza. Ustawienia: 20 ms/działkę, 2 V/działkę, wyzwalanie zboczem opadającym ~2,5V, tryb SINGLE.
   - Dotknij +5V do in_AB (żółty drut) i trzymaj ~1 s, potem puść.
-  - Oczekiwane: na pin 4 napięcie spada do ~0V na **~15–135 ms** (przy 5V z zasilacza zwykle 15–40 ms), potem łagodnie wraca do 5V, mimo że wejście nadal ma 5V ✓. Czas mierz na poziomie ~2,5V. Zapisz go.
+  - Oczekiwane: na pin 4 napięcie spada do ~0V na **~15–133 ms** (przy 5V z zasilacza zwykle 15–40 ms), potem łagodnie wraca do 5V, mimo że wejście nadal ma 5V ✓. Czas mierz na poziomie ~2,5V. Zapisz go.
   - Powtórz dotknięcie 3 razy (oscyloskop znów w SINGLE) — **każde** dotknięcie daje impuls ✓ (R7 rozładowuje C1 po puszczeniu).
   - ❌ Pin 4 spada tylko do 1–4V zamiast ~0V → zamienione C i E w Q1 (patrz Troubleshooting).
 
 - [ ] **Krok 4: Tor C**
 
-  Powtórz Krok 2 dla toru C: zamiast białych przewodów zewrzyj kawałkiem drutu nóżki C2; +5V na in_C (niebieski drut), minus na GND_mod; multimetr czerwona na pin 4 OC2, czarna na pin 3 → **< 0.4V** ✓; odłącz 5V → **OL** ✓. Usuń zworkę z C2.
-  Powtórz Krok 3 dla toru C: pull-up 10kΩ do pin 4 OC2, sonda na pin 4 OC2, dotknięcie +5V do in_C → impuls **~15–135 ms** przy każdym z 3 dotknięć ✓.
+  Powtórz Krok 2 dla toru C (na czas pomiaru multimetrem odłącz pull-up 10kΩ z Kroku 3): zamiast białych przewodów zewrzyj kawałkiem drutu nóżki C2; +5V na in_C (niebieski drut), minus na GND_mod; multimetr czerwona na pin 4 OC2, czarna na pin 3 → **< 0.4V** ✓; odłącz 5V → **OL** ✓. Usuń zworkę z C2.
+  Powtórz Krok 3 dla toru C: pull-up 10kΩ do pin 4 OC2, sonda na pin 4 OC2, dotknięcie +5V do in_C → impuls **~15–133 ms** przy każdym z 3 dotknięć ✓.
 
 - [ ] **Krok 5: Odporność na ±10V** (jeśli masz moduł 20 Vpp)
 
@@ -293,7 +293,7 @@ Wykonaj dla każdego pedału osobno. Zacznij od SMMH.
 
 - [ ] **Krok 6: Przymierz gniazda i przełączniki**
 
-  Wsuń bez przykręcania. Sprawdź, czy pasują i nie dotykają PCB pedału.
+  Jeśli wyjmowałeś PCB — włóż je z powrotem i przykręć. Wsuń gniazda i przełączniki bez przykręcania. Sprawdź, czy pasują i nie dotykają PCB pedału.
 
 - [ ] **✓ Punkt przerwy 5:** Otwory wywiercone, opiłki usunięte, elementy pasują. To samo dla Cathedral.
 
@@ -301,39 +301,42 @@ Wykonaj dla każdego pedału osobno. Zacznij od SMMH.
 
 ## Zadanie 6: Instalacja w SMMH
 
-- [ ] **Krok 1: Przylutuj krótkie przewody do padów tap SMMH**
+- [ ] **Krok 1: Przylutuj przewody do padów tap SMMH**
 
-  Na padach zaznaczonych w Zadaniu 1: krótki (~5 cm) czerwony przewód do tap_pin, krótki czarny do GND_ped. Minimum cyny, nie ruszaj sąsiednich elementów. Do tych krótkich przewodów dolutujesz w Krokach 5–6 REC i perfboard.
+  Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów. W Kroku 6 oba trafią na terminale REC razem z drutami z perfboardu.
 
 - [ ] **Krok 2: Zidentyfikuj wyprowadzenia gniazd PJ398SM (przed lutowaniem!)**
 
-  PJ398SM ma 3 wyprowadzenia: tip, styk przełączany i sleeve. Włóż kabel patch do gniazda. Tryb ciągłości: końcówka (tip) wtyku ↔ wyprowadzenie, które piknie = **tip**; tuleja wtyku ↔ wyprowadzenie, które piknie = **sleeve**. Trzecie wyprowadzenie zostaw wolne. Oznacz markerem.
+  PJ398SM ma 3 wyprowadzenia: tip, styk przełączany i sleeve. Włóż jeden wtyk kabla patch do gniazda. Tryb ciągłości: sonda na końcówce (tip) wtyku na **drugim końcu** kabla ↔ wyprowadzenie gniazda, które piknie = **tip**; sonda na tulei tego samego (drugiego) wtyku ↔ wyprowadzenie, które piknie = **sleeve**. Trzecie wyprowadzenie zostaw wolne. Oznacz markerem.
 
-- [ ] **Krok 3: Zamontuj gniazda 3.5mm**
+- [ ] **Krok 3: Zamontuj gniazda i przełączniki**
 
-  Przykręć PJ398SM. Przylutuj:
-  - tip jacka A → lewy terminal SELECT
-  - tip jacka B → prawy terminal SELECT
+  Przykręć PJ398SM i trzy przełączniki. Przylutuj:
   - tip jacka C → niebieski drut (in_C)
   - sleeve wszystkich trzech jacków → zielony drut (GND_mod)
+  (tip jacków A i B przylutujesz do SELECT w Kroku 5)
 
-- [ ] **Krok 4: Zamontuj SELECT (ON/OFF/ON) i ustal jego pozycje**
+- [ ] **Krok 4: Ustal pozycje przełączników (przed lutowaniem!)**
 
-  Środkowy terminal (common) → żółty drut (in_AB). Lewy → jack A, prawy → jack B.
-  Tryb ciągłości: środkowy terminal ↔ terminal jacka A, przełączaj dźwignię → pozycja, w której piknie = **A**. Analogicznie **B**. Pozycja środkowa = OFF. Opisz obudowę.
+  Przełączniki zamontowane w obudowie, jeszcze nic do nich nie przylutowane. Tryb ciągłości:
+  - **SELECT:** środkowy terminal ↔ lewy terminal, przełączaj dźwignię → pozycja, w której piknie = **A**. Środkowy ↔ prawy → pozycja, w której piknie = **B**. Pozycja środkowa = OFF.
+  - **GATE/TRIG:** dwa terminale, przełączaj dźwignię → pozycja, w której piknie = **GATE**; druga = **TRIG**.
+  - **REC:** dwa terminale → pozycja, w której piknie = **ON**; druga = **OFF**.
 
-- [ ] **Krok 5: Zamontuj GATE/TRIG (ON/OFF) i ustal jego pozycje**
+  Opisz obudowę przy każdym przełączniku.
 
-  Dwa białe druty (in_AB i node_h) do dwóch terminali przełącznika.
-  Tryb ciągłości na dwóch terminalach, przełączaj dźwignię → pozycja, w której piknie = **GATE**; druga = **TRIG**. Opisz obudowę.
+- [ ] **Krok 5: Przylutuj SELECT i GATE/TRIG**
 
-- [ ] **Krok 6: Zamontuj REC (ON/OFF) i podłącz perfboard**
+  - SELECT: środkowy terminal (common) → żółty drut (in_AB); lewy → tip jacka A, prawy → tip jacka B.
+  - GATE/TRIG: dwa białe druty (in_AB i node_h) do dwóch terminali.
 
-  - REC: terminal 1 → krótki czerwony przewód (tap_pin SMMH), terminal 2 → krótki czarny przewód (GND_ped SMMH).
-  - Czerwony drut z perfboardu (tap_pin) → krótki czerwony przewód tap_pin. Zaizoluj koszulką termokurczliwą.
-  - Czarny drut z perfboardu (GND_ped) → krótki czarny przewód GND_ped. Zaizoluj koszulką.
+- [ ] **Krok 6: Przylutuj REC i podłącz perfboard**
+
+  - REC terminal 1: czerwony przewód z padu tap_pin **i** czerwony drut z perfboardu (tap_pin) — oba do tego samego terminala.
+  - REC terminal 2: czarny przewód z padu GND_ped **i** czarny drut z perfboardu (GND_ped) — oba do tego samego terminala.
+  - Jeśli łączysz przewody w połowie zamiast na terminalu — najpierw nasuń koszulkę termokurczliwą, potem lutuj.
   - Zielony (GND_mod) → sleeve jacków **TYLKO** — nigdy do GND pedału ani do obudowy.
-  - Ustaw REC w pozycji OFF.
+  - Ustaw REC w pozycji OFF (opisanej w Kroku 4).
 
 - [ ] **Krok 7: Przymocuj perfboard**
 
@@ -376,33 +379,39 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 
 ### Instalacja
 
-- [ ] **Krok 1: Przylutuj krótkie przewody do padów tap Cathedral**
+- [ ] **Krok 1: Przylutuj przewody do padów tap Cathedral**
 
-  Na padach zaznaczonych w Zadaniu 1: krótki (~5 cm) czerwony przewód do tap_pin, krótki czarny do GND_ped. Minimum cyny, nie ruszaj sąsiednich elementów.
+  Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów.
 
 - [ ] **Krok 2: Zidentyfikuj wyprowadzenia gniazd PJ398SM (przed lutowaniem!)**
 
-  Włóż kabel patch do gniazda. Tryb ciągłości: końcówka (tip) wtyku ↔ wyprowadzenie, które piknie = **tip**; tuleja wtyku ↔ wyprowadzenie, które piknie = **sleeve**. Trzecie wyprowadzenie zostaw wolne. Oznacz markerem.
+  Włóż jeden wtyk kabla patch do gniazda. Tryb ciągłości: sonda na końcówce (tip) wtyku na **drugim końcu** kabla ↔ wyprowadzenie gniazda, które piknie = **tip**; sonda na tulei tego samego (drugiego) wtyku ↔ wyprowadzenie, które piknie = **sleeve**. Trzecie wyprowadzenie zostaw wolne. Oznacz markerem.
 
-- [ ] **Krok 3: Zamontuj gniazda 3.5mm**
+- [ ] **Krok 3: Zamontuj gniazda i przełączniki**
 
-  Przykręć PJ398SM. Przylutuj: tip A → lewy terminal SELECT, tip B → prawy terminal SELECT, tip C → niebieski drut (in_C), sleeve wszystkich trzech → zielony drut (GND_mod).
+  Przykręć PJ398SM i trzy przełączniki. Przylutuj: tip C → niebieski drut (in_C), sleeve wszystkich trzech → zielony drut (GND_mod). (Tip A i B przylutujesz do SELECT w Kroku 5.)
 
-- [ ] **Krok 4: Zamontuj SELECT (ON/OFF/ON) i ustal jego pozycje**
+- [ ] **Krok 4: Ustal pozycje przełączników (przed lutowaniem!)**
 
-  Środkowy terminal (common) → żółty drut (in_AB). Lewy → jack A, prawy → jack B.
-  Tryb ciągłości: środkowy terminal ↔ terminal jacka A, przełączaj dźwignię → pozycja, w której piknie = **A**. Analogicznie **B**. Pozycja środkowa = OFF. Opisz obudowę.
+  Przełączniki zamontowane w obudowie, jeszcze nic do nich nie przylutowane. Tryb ciągłości:
+  - **SELECT:** środkowy terminal ↔ lewy terminal, przełączaj dźwignię → pozycja, w której piknie = **A**. Środkowy ↔ prawy → pozycja, w której piknie = **B**. Pozycja środkowa = OFF.
+  - **GATE/TRIG:** dwa terminale, przełączaj dźwignię → pozycja, w której piknie = **GATE**; druga = **TRIG**.
+  - **REC:** dwa terminale → pozycja, w której piknie = **ON**; druga = **OFF**.
 
-- [ ] **Krok 5: Zamontuj GATE/TRIG (ON/OFF) i ustal jego pozycje**
+  Opisz obudowę przy każdym przełączniku.
 
-  Dwa białe druty (in_AB i node_h) do dwóch terminali. Tryb ciągłości na dwóch terminalach, przełączaj dźwignię → pozycja, w której piknie = **GATE**; druga = **TRIG**. Opisz obudowę.
+- [ ] **Krok 5: Przylutuj SELECT i GATE/TRIG**
 
-- [ ] **Krok 6: Zamontuj REC (ON/OFF) i podłącz perfboard**
+  - SELECT: środkowy terminal (common) → żółty drut (in_AB); lewy → tip jacka A, prawy → tip jacka B.
+  - GATE/TRIG: dwa białe druty (in_AB i node_h) do dwóch terminali.
 
-  - REC: terminal 1 → krótki czerwony przewód (tap_pin Cathedral), terminal 2 → krótki czarny przewód (GND_ped Cathedral).
-  - Czerwony drut z perfboardu → krótki czerwony przewód tap_pin; czarny → krótki czarny GND_ped. Zaizoluj koszulką termokurczliwą.
+- [ ] **Krok 6: Przylutuj REC i podłącz perfboard**
+
+  - REC terminal 1: czerwony przewód z padu tap_pin Cathedral **i** czerwony drut z perfboardu — oba do tego samego terminala.
+  - REC terminal 2: czarny przewód z padu GND_ped Cathedral **i** czarny drut z perfboardu — oba do tego samego terminala.
+  - Jeśli łączysz przewody w połowie — najpierw nasuń koszulkę termokurczliwą, potem lutuj.
   - Zielony (GND_mod) → sleeve jacków **TYLKO**.
-  - Ustaw REC w pozycji OFF.
+  - Ustaw REC w pozycji OFF (opisanej w Kroku 4).
 
 - [ ] **Krok 7: Przymocuj perfboard**
 
@@ -447,11 +456,11 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 | GATE działa, TRIG nie | Impuls za krótki dla pedału | C1/C2 → 0.33µF |
 | TRIG nie działa, GATE też nie | Złe nóżki Q1/Q2 albo D3/D4 odwrotnie | Sprawdź opis nóżek z Zadania 2; test D3/D4 z Zadania 3 Krok 6 |
 | Pin 4 OC spada tylko do 1–4V zamiast ~0V | Zamienione C i E w Q1/Q2 | Wylutuj tranzystor, zidentyfikuj nóżki ponownie (Zadanie 2 Krok 4, gniazdo hFE) |
-| Tylko pierwszy tap działa, kolejne nie | Brak R7/R8 lub zimny lut na R7/R8 | Sprawdź R7 (in_AB ↔ GND_mod) i R8 (in_C ↔ GND_mod): 100kΩ |
+| Tylko pierwszy tap działa, kolejne nie (test ręczny, moduł z wyjściem przez diodę) | Brak R7/R8 lub zimny lut na R7/R8 | Bez wtyków, GATE/TRIG na TRIG, pedał bez zasilania. Omomierz: czerwona sonda na in_AB, czarna na GND_mod → ≈ 47kΩ; czerwona na in_C, czarna na GND_mod → ≈ 47kΩ (w drugą stronę i w pozycji GATE odczyt jest zafałszowany przez złącza tranzystora) |
 | Tap nie działa w ogóle | Zamienione tap_pin i GND_ped | Zmierz ponownie pady (Zadanie 1) |
-| Wejście działa tylko bez wtyku albo wcale | Przylutowany styk przełączany gniazda zamiast tip | Zadanie 6 Krok 2 — identyfikacja wyprowadzeń |
-| Pedał wchodzi w looper / infinite w trybie TRIG | GATE/TRIG opisany odwrotnie, zwarty albo C1 zwarty | Zadanie 6 Krok 5; sprawdź C1 |
-| Hum po podłączeniu modulara | GND_mod dotyka obudowy lub GND_ped | Zadanie 6 Krok 8 |
+| Wejście nie reaguje wcale | Przylutowany styk przełączany gniazda zamiast tip | Identyfikacja wyprowadzeń: Zadanie 6 Krok 2 (SMMH) / Zadanie 8 Krok 2 (Cathedral) |
+| Pedał wchodzi w looper / infinite w trybie TRIG | GATE/TRIG opisany odwrotnie, zwarty albo C1 zwarty | Zadanie 6 / Zadanie 8, Krok 4; sprawdź C1 |
+| Hum po podłączeniu modulara | GND_mod dotyka obudowy lub GND_ped | Zadanie 6 / Zadanie 8, Krok 8 |
 | R2 gorący | Długi sygnał ±12V — normalne do ~0,2 W | Sprawdź, czy R2 to 0,6 W, nie 1/4 W |
 
 ---
