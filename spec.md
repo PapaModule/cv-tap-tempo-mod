@@ -210,7 +210,7 @@ Prostokąt bipolarny (skok z −V na +V, a nie od 0V) daje dłuższy impuls: naj
 
 **Wszystkie elementy są przewlekane (THT) — brak SMD.** Przy zakupie pilnować oznaczeń obudów z tabeli.
 
-**Łącznie na oba pedały:** ×2 każdego elementu. Zapas: 2× kondensator 0,33 µF na wypadek wymiany (patrz „Weryfikacja”).
+**Łącznie na oba pedały:** ×2 każdego elementu. Zapas: 4× kondensator 0,33 µF (2 na pedał) na wypadek wymiany (patrz „Weryfikacja”).
 
 Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B (R8 w torze C odpowiada R7).
 

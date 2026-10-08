@@ -1,5 +1,5 @@
 #!/bin/sh
-# Odtwarza wszystkie liczby z sekcji "Dlaczego v3" w spec.md.
+# Odtwarza liczby z sekcji "Parametry" i "Dlaczego v3" w spec.md.
 # Wymaga: ngspice (brew install ngspice), python3.
 set -e
 export LC_ALL=C
