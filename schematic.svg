@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="1400" height="900" viewBox="0 0 1400 900" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif" font-size="13">
+<svg width="1400" height="930" viewBox="0 0 1400 930" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif" font-size="13">
   <style>
     .lbl  { font-size: 13px; fill: #111; }
     .val  { font-size: 11px; fill: #444; }
@@ -10,14 +10,14 @@
     .sect { font-size: 13px; fill: #666; font-weight: bold; }
     line  { stroke-linecap: round; stroke-linejoin: round; }
   </style>
-<rect width="1400" height="900" fill="white"/>
-<rect x="8" y="8" width="1384" height="884" fill="none" stroke="#bbb" stroke-width="1"/>
+<rect width="1400" height="930" fill="white"/>
+<rect x="8" y="8" width="1384" height="914" fill="none" stroke="#bbb" stroke-width="1"/>
 <text x="700.0" y="36" class="head" text-anchor="middle">CV Tap Tempo Mod v3 — schemat ideowy (jeden pedał)</text>
 <line x1="1000" y1="56" x2="1000" y2="800" stroke="#c00" stroke-width="1.5" stroke-dasharray="8,5"/>
 <text x="990" y="70" class="iso" text-anchor="end">GND_mod (modular)</text>
 <text x="1010" y="70" class="iso" text-anchor="start">GND_ped (pedał)</text>
 <text x="30" y="92" class="sect" text-anchor="start">Tor A/B (SELECT + GATE/TRIG)</text>
-<line x1="320" y1="130" x2="320" y2="390" stroke="#111" stroke-width="2" />
+<line x1="320" y1="130" x2="320" y2="300" stroke="#111" stroke-width="2" />
 <circle cx="320" cy="225" r="4" fill="#111"/>
 <text x="312" y="217" class="val" text-anchor="end">in_AB</text>
 <line x1="320" y1="130" x2="410.0" y2="130" stroke="#111" stroke-width="2" />
@@ -136,6 +136,8 @@
 <line x1="51" y1="179" x2="69" y2="179" stroke="#111" stroke-width="2" />
 <line x1="56" y1="184" x2="64" y2="184" stroke="#111" stroke-width="2" />
 <text x="60" y="200" class="val" text-anchor="middle">GND_mod</text>
+<text x="82" y="126" class="val" text-anchor="start">T</text>
+<text x="52" y="158" class="val" text-anchor="end">S</text>
 <circle cx="60" cy="330" r="14" fill="white" stroke="#111" stroke-width="2"/>
 <circle cx="60" cy="330" r="4" fill="#111"/>
 <text x="60" y="308" class="lbl" text-anchor="middle">CV B</text>
@@ -145,6 +147,8 @@
 <line x1="51" y1="379" x2="69" y2="379" stroke="#111" stroke-width="2" />
 <line x1="56" y1="384" x2="64" y2="384" stroke="#111" stroke-width="2" />
 <text x="60" y="400" class="val" text-anchor="middle">GND_mod</text>
+<text x="82" y="326" class="val" text-anchor="start">T</text>
+<text x="52" y="358" class="val" text-anchor="end">S</text>
 <line x1="74" y1="130" x2="196" y2="130" stroke="#111" stroke-width="2" />
 <line x1="74" y1="330" x2="196" y2="330" stroke="#111" stroke-width="2" />
 <circle cx="200" cy="130" r="4" fill="white" stroke="#111" stroke-width="2"/>
@@ -156,7 +160,7 @@
 <text x="215" y="209" class="lbl" text-anchor="end">SELECT</text>
 <text x="215" y="227" class="val" text-anchor="end">A / OFF / B</text>
 <text x="30" y="452" class="sect" text-anchor="start">Tor C (zawsze TRIG)</text>
-<line x1="320" y1="500" x2="320" y2="760" stroke="#111" stroke-width="2" />
+<line x1="320" y1="500" x2="320" y2="670" stroke="#111" stroke-width="2" />
 <circle cx="320" cy="595" r="4" fill="#111"/>
 <text x="312" y="587" class="val" text-anchor="end">in_C</text>
 <line x1="320" y1="500" x2="410.0" y2="500" stroke="#111" stroke-width="2" />
@@ -266,33 +270,36 @@
 <line x1="51" y1="644" x2="69" y2="644" stroke="#111" stroke-width="2" />
 <line x1="56" y1="649" x2="64" y2="649" stroke="#111" stroke-width="2" />
 <text x="60" y="665" class="val" text-anchor="middle">GND_mod</text>
+<text x="82" y="591" class="val" text-anchor="start">T</text>
+<text x="52" y="623" class="val" text-anchor="end">S</text>
 <line x1="74" y1="595" x2="320" y2="595" stroke="#111" stroke-width="2" />
-<line x1="1120" y1="130" x2="1240" y2="130" stroke="#111" stroke-width="2" />
+<line x1="1120" y1="130" x2="1330" y2="130" stroke="#111" stroke-width="2" />
 <line x1="1120" y1="500" x2="1161" y2="500" stroke="#111" stroke-width="2" />
 <path d="M 1161 500 A 9 9 0 0 1 1179 500" fill="none" stroke="#111" stroke-width="2"/>
-<line x1="1179" y1="500" x2="1240" y2="500" stroke="#111" stroke-width="2" />
-<line x1="1240" y1="130" x2="1240" y2="740" stroke="#111" stroke-width="2" />
-<circle cx="1240" cy="500" r="4" fill="#111"/>
+<line x1="1179" y1="500" x2="1330" y2="500" stroke="#111" stroke-width="2" />
+<line x1="1330" y1="130" x2="1330" y2="740" stroke="#111" stroke-width="2" />
+<circle cx="1330" cy="500" r="4" fill="#111"/>
 <line x1="1120" y1="190" x2="1170" y2="190" stroke="#111" stroke-width="2" />
 <line x1="1120" y1="560" x2="1170" y2="560" stroke="#111" stroke-width="2" />
 <line x1="1170" y1="190" x2="1170" y2="740" stroke="#111" stroke-width="2" />
 <circle cx="1170" cy="560" r="4" fill="#111"/>
-<text x="1248" y="122" class="lbl" text-anchor="start">tap_pin</text>
-<text x="1248" y="138" class="val" text-anchor="start">→ PCB pedału (~3.3V)</text>
+<text x="1322" y="106" class="lbl" text-anchor="end">tap_pin</text>
+<text x="1322" y="122" class="val" text-anchor="end">→ PCB pedału (~3.3V)</text>
 <text x="1178" y="208" class="lbl" text-anchor="start">GND_ped</text>
-<circle cx="1240" cy="740" r="4" fill="#111"/>
-<circle cx="1170" cy="740" r="4" fill="#111"/>
+<text x="1178" y="222" class="val" text-anchor="start">→ PCB pedału (GND</text>
+<text x="1178" y="235" class="val" text-anchor="start">przycisku tap)</text>
 <circle cx="1192" cy="770" r="4" fill="white" stroke="#111" stroke-width="2"/>
-<circle cx="1218" cy="770" r="4" fill="white" stroke="#111" stroke-width="2"/>
+<circle cx="1308" cy="770" r="4" fill="white" stroke="#111" stroke-width="2"/>
 <line x1="1170" y1="740" x2="1170" y2="770" stroke="#111" stroke-width="2" />
 <line x1="1170" y1="770" x2="1188" y2="770" stroke="#111" stroke-width="2" />
-<line x1="1240" y1="740" x2="1240" y2="770" stroke="#111" stroke-width="2" />
-<line x1="1240" y1="770" x2="1222" y2="770" stroke="#111" stroke-width="2" />
-<line x1="1195" y1="768" x2="1215" y2="754" stroke="#111" stroke-width="2" />
-<text x="1205.0" y="792" class="lbl" text-anchor="middle">REC (ON/OFF)</text>
+<line x1="1330" y1="740" x2="1330" y2="770" stroke="#111" stroke-width="2" />
+<line x1="1330" y1="770" x2="1312" y2="770" stroke="#111" stroke-width="2" />
+<line x1="1195" y1="768" x2="1305" y2="754" stroke="#111" stroke-width="2" />
+<text x="1250.0" y="792" class="lbl" text-anchor="middle">REC (ON/OFF)</text>
 <text x="30" y="822" class="note" text-anchor="start">D1/D2: antyparalel do LED — katoda (pasek) → pin 1 PC817, anoda → pin 2</text>
 <text x="30" y="837" class="note" text-anchor="start">D3/D4: klamp bazy — anoda → GND_mod, katoda (pasek) → baza Q</text>
 <text x="30" y="852" class="note" text-anchor="start">R7/R8: pull-down wejścia (in → GND_mod) — kolejne gate'y działają też przy źródle, które nie ściąga do 0V</text>
 <text x="30" y="867" class="note" text-anchor="start">TRIG: impuls 15–133 ms · GATE: tap tak długi jak gate · odporne na ±12V (20 Vpp i 24 Vpp)</text>
-<text x="30" y="882" class="note" text-anchor="start">Przecięcie z łukiem = brak połączenia. Kropka = połączenie. Wartości i połączenia: spec.md (v3)</text>
+<text x="30" y="882" class="note" text-anchor="start">Każdy symbol masy = GND_mod (masa modulara) — nigdy GND_ped ani obudowa pedału. T = tip, S = sleeve gniazda.</text>
+<text x="30" y="897" class="note" text-anchor="start">Przecięcie z łukiem = brak połączenia. Kropka = połączenie. Wartości i połączenia: spec.md (v3)</text>
 </svg>

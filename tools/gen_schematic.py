@@ -5,8 +5,9 @@ więc kierunek diod jest identyczny w torze A/B i C. Po zmianie: wyrenderuj PNG 
 kierunki diod wizualnie (plan wdrożenia, Task 3 Step 7).
 """
 
-W, H = 1400, 900
+W, H = 1400, 930
 ISO_X = 1000
+BUS_X = 320  # magistrala wejścia in_AB / in_C
 out = []
 
 
@@ -102,6 +103,8 @@ def jack(x, y, label):
     text(x, y - 22, label, "lbl")
     line(x, y + 14, x, y + 34)
     gnd(x, y + 34)
+    text(x + 22, y - 4, "T", "val", "start")
+    text(x - 8, y + 28, "S", "val", "end")
 
 
 def switch_spst(x1, x2, y, name, note):
@@ -152,11 +155,11 @@ def optocoupler(y_top, name):
 def channel(y0, name_suffix, labels, with_select):
     """Jeden tor. y0 = linia R2 (górna). Zwraca (pin4, pin3)."""
     C, R_LED, R_BASE, R_SH, R_PD, D_LED, D_CL, Q, OC = labels
-    bus_x = 320
+    bus_x = BUS_X
     y_led = y0
     y_ctl = y0 + 170
     # magistrala wejścia in_*
-    line(bus_x, y_led, bus_x, y_ctl + 90)
+    line(bus_x, y_led, bus_x, y_ctl)
     in_y = y0 + 95
     dot(bus_x, in_y)
     text(bus_x - 8, in_y - 8, f"in_{name_suffix}", "val", "end")
@@ -241,7 +244,7 @@ for (x, y) in (sel_a, sel_b, sel_c):
     add(f'<circle cx="{x}" cy="{y}" r="4" fill="white" stroke="#111" stroke-width="2"/>')
 line(sel_c[0] - 3, sel_c[1] - 3, sel_a[0] + 3, sel_a[1] + 3)
 add(f'<line x1="{sel_c[0] - 3}" y1="{sel_c[1] + 3}" x2="{sel_b[0] + 3}" y2="{sel_b[1] - 3}" stroke="#111" stroke-width="2" stroke-dasharray="5,4"/>')
-line(sel_c[0] + 4, sel_c[1], 320, in_ab_y)
+line(sel_c[0] + 4, sel_c[1], BUS_X, in_ab_y)
 text(215, in_ab_y - 16, "SELECT", "lbl", "end")
 text(215, in_ab_y + 2, "A / OFF / B", "val", "end")
 
@@ -249,10 +252,10 @@ text(215, in_ab_y + 2, "A / OFF / B", "val", "end")
 text(30, 452, "Tor C (zawsze TRIG)", "sect", "start")
 in_c_y, p4c, p3c = channel(500, "C", ("C2", "R4", "R6", "R3", "R8", "D2", "D4", "Q2", "OC2"), False)
 jack(60, in_c_y, "CV C")
-line(74, in_c_y, 320, in_c_y)
+line(74, in_c_y, BUS_X, in_c_y)
 
 # strona pedału
-tap_x, gnd_x = 1240, 1170
+tap_x, gnd_x = 1330, 1170
 line(p4a[0], p4a[1], tap_x, p4a[1])
 # pin 4 OC2 przecina szynę GND_ped bez połączenia — mostek (łuk)
 line(p4c[0], p4c[1], gnd_x - 9, p4c[1])
@@ -264,13 +267,13 @@ line(p3a[0], p3a[1], gnd_x, p3a[1])
 line(p3c[0], p3c[1], gnd_x, p3c[1])
 line(gnd_x, p3a[1], gnd_x, 740)
 dot(gnd_x, p3c[1])
-text(tap_x + 8, p4a[1] - 8, "tap_pin", "lbl", "start")
-text(tap_x + 8, p4a[1] + 8, "→ PCB pedału (~3.3V)", "val", "start")
+text(tap_x - 8, p4a[1] - 24, "tap_pin", "lbl", "end")
+text(tap_x - 8, p4a[1] - 8, "→ PCB pedału (~3.3V)", "val", "end")
 text(gnd_x + 8, p3a[1] + 18, "GND_ped", "lbl", "start")
+text(gnd_x + 8, p3a[1] + 32, "→ PCB pedału (GND", "val", "start")
+text(gnd_x + 8, p3a[1] + 45, "przycisku tap)", "val", "start")
 # REC
 y_rec = 740
-dot(tap_x, y_rec)
-dot(gnd_x, y_rec)
 add(f'<circle cx="{gnd_x + 22}" cy="{y_rec + 30}" r="4" fill="white" stroke="#111" stroke-width="2"/>')
 add(f'<circle cx="{tap_x - 22}" cy="{y_rec + 30}" r="4" fill="white" stroke="#111" stroke-width="2"/>')
 line(gnd_x, y_rec, gnd_x, y_rec + 30)
@@ -286,6 +289,7 @@ notes = [
     "D3/D4: klamp bazy — anoda → GND_mod, katoda (pasek) → baza Q",
     "R7/R8: pull-down wejścia (in → GND_mod) — kolejne gate'y działają też przy źródle, które nie ściąga do 0V",
     "TRIG: impuls 15–133 ms · GATE: tap tak długi jak gate · odporne na ±12V (20 Vpp i 24 Vpp)",
+    "Każdy symbol masy = GND_mod (masa modulara) — nigdy GND_ped ani obudowa pedału. T = tip, S = sleeve gniazda.",
     "Przecięcie z łukiem = brak połączenia. Kropka = połączenie. Wartości i połączenia: spec.md (v3)",
 ]
 for i, n in enumerate(notes):

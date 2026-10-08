@@ -111,7 +111,7 @@ REC switch ───────────────────────
 
 | Net | Elementy |
 |---|---|
-| node_in | SELECT common (tor A/B) lub tip jacka C (tor C), R2, C1, R7, SW_HP (tylko A/B) |
+| node_in (na schemacie i w plan.md: in_AB / in_C) | SELECT common (tor A/B) lub tip jacka C (tor C), R2, C1, R7, SW_HP (tylko A/B) |
 | LED+ | R2, pin1 OC1, katoda D1 |
 | LED− | pin2 OC1, anoda D1, kolektor Q1 |
 | node_h | C1, R1 (100k), R5 (47k), SW_HP (tylko A/B) |
