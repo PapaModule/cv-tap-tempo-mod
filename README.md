@@ -13,7 +13,7 @@ Wersja układu: **v3 (2026-10-08)**. Projekt oparty na modyfikacji [navs.modular
 
 ## Co robi ten mod
 
-Każdy pedał otrzymuje trzy wejścia CV 3.5mm (Eurorack, gate/trigger 5–12V, odporne na sygnały ±10V / 20 Vpp i ±12V):
+Każdy pedał otrzymuje trzy wejścia CV 3.5mm (Eurorack, gate/trigger 5–12V z wyjścia modułu o rezystancji wyjścia do ~1 kΩ — typowe; odporne na sygnały ±10V / 20 Vpp i ±12V):
 
 | Wejście | Opis |
 |---|---|
@@ -80,6 +80,7 @@ Zapas na wypadek wymiany: 2× kondensator 0.33µF (jeśli pedał nie łapie kró
 - **Cathedral:** podczas tapowania reverb krótko się urywa — ograniczenie firmware, nie moda
 - **Wolne LFO (sinus) w trybie TRIG:** łagodne zbocze daje niepewny tap — do sterowania z LFO używaj trybu GATE albo przebiegu prostokątnego
 - **Minimalna długość impulsu**, którą akceptuje MCU pedału, nie jest publikowana — mierzona po zbudowaniu (plan.md); w razie potrzeby wymiana C1/C2 na 0.33µF
+- **Rezystancja wyjścia modułu:** projekt zakłada typowe wyjścia Eurorack (do ~1 kΩ). Moduł z wyjściem > ~2 kΩ przy 5V może nie wyzwalać tapu; z takimi modułami nie stosuj zapasowego kondensatora 0.33µF
 - **Obciążenie modułu:** do 21 mA przy ±12V z wyjścia bez rezystora — bezpieczne dla typowych wyjść; moduł o bardzo słabym wyjściu może obniżyć napięcie
 - **Próg 350 ms w Cathedral** pochodzi z manuala w wersji, której nie udało się zweryfikować bezpośrednio
 

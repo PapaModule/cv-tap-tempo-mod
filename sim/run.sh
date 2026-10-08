@@ -133,3 +133,25 @@ for V in 10 12; do for THR in 1e-3 1e-4; do
   ngspice -b "$TMP/bsq.cir" > /dev/null 2>&1
   printf "±%-2sV 0.25Hz próg=%-4s: " "$V" "$THR"; python3 analyze.py "$TMP/bsq.txt" "$THR"
 done; done
+
+echo "== v3: moduł o wysokiej rezystancji wyjścia (Rs 2.2k / 4.7k), BC547B"
+echo "   prąd LED przy 5V (nominał) oraz najdłuższy impuls: 12V, C+10%, hFE 450, próg 0.1mA"
+for RS in 2.2k 4.7k; do
+  sed -e "s|^.param .*|.param VCV=5 RSRC=$RS R2V=470 CBV=0.22u|" \
+      -e "s|^\* __SOURCE__.*|VIN in 0 PWL(0 0 1m 0 1.001m {VCV} 1.001 {VCV} 1.002 0 1.1 0)|" \
+      -e "s|^\* __ANALYSIS__.*|.tran 20u 1.1\n.control\nrun\nwrdata $TMP/hz.txt i(VLsense)\nmeas tran ipk MAX i(VLsense)\n.endc|" \
+      v3_gate.cir > "$TMP/hz.cir"
+  ngspice -b "$TMP/hz.cir" > "$TMP/hz.log" 2>&1
+  printf "5V  Rs=%-4s C=0.22u hFE=400: %s  " "$RS" "$(awk '/^ipk/{printf "I_LED pk %.2f mA", $3*1e3}' "$TMP/hz.log")"
+  python3 analyze.py "$TMP/hz.txt"
+  sed -e "s/BF=400/BF=450/" models.inc > "$TMP/models450.inc"
+  for C in 0.242u 0.363u; do
+    sed -e "s|^.include .*|.include $TMP/models450.inc|" \
+        -e "s|^.param .*|.param VCV=12 RSRC=$RS R2V=470 CBV=$C|" \
+        -e "s|^\* __SOURCE__.*|VIN in 0 PWL(0 0 1m 0 1.001m {VCV} 1.001 {VCV} 1.002 0 1.1 0)|" \
+        -e "s|^\* __ANALYSIS__.*|.tran 20u 1.1\n.control\nrun\nwrdata $TMP/hz2.txt i(VLsense)\n.endc|" \
+        v3_gate.cir > "$TMP/hz2.cir"
+    ngspice -b "$TMP/hz2.cir" > /dev/null 2>&1
+    printf "12V Rs=%-4s C=%-6s max, próg 0.1mA: " "$RS" "$C"; python3 analyze.py "$TMP/hz2.txt" 1e-4
+  done
+done

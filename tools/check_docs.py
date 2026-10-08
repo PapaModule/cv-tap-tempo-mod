@@ -37,12 +37,13 @@ REQUIRED = {
     "README.md": [
         rf"0[.,]22 ?{MU}F", r"BC547B", rf"470 ?{OHM}", r"0,6 ?W", rf"47 ?k{OHM}", rf"100 ?k{OHM}",
         r"GATE/TRIG", r"DO-35", r"DIP-4", r"±10 ?V|20 ?Vpp", r"spec\.md", r"plan\.md",
+        r"rezystancj\w* wyjścia",
     ],
     "plan.md": [
         rf"0[.,]22 ?{MU}F", rf"0[.,]33 ?{MU}F", r"BC547B", r"0,6 ?W", rf"47 ?k{OHM}", rf"100 ?k{OHM}",
         r"GATE/TRIG", r"DO-35", r"DIP-4", r"5×7", r"[Mm]inimalny impuls",
         r"[Pp]róg przytrzymania", r"GND_mod", r"GND_ped", r"antyparalel",
-        r"\bR7\b", r"\bR8\b",
+        r"\bR7\b", r"\bR8\b", r"[Pp]rąd zwarcia", r"z wtykiem", r"\b[Oo]dłącz zasilanie pedału",
     ],
     "schematic.svg": [
         rf"0[.,]22 ?{MU}F", rf"470 ?{OHM}", rf"47 ?k{OHM}", rf"100 ?k{OHM}", r"BC547B",

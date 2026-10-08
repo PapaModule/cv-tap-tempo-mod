@@ -31,13 +31,19 @@
 
 - [ ] **Krok 3: Zmierz napięcie na padach tap**
 
-  Podłącz zasilanie pedału. Multimetr na DC 20V. Czarna sonda na GND pedału (np. tuleja gniazda audio). Czerwona sonda po kolei na oba pady przycisku tap.
+  Podłącz zasilanie pedału. Multimetr na DC 20V. Czarną sondę przypnij krokodylkiem do GND pedału (np. tuleja gniazda audio) — sonda zsunięta na sąsiedni element włączonej płytki może ją uszkodzić. Czerwona sonda po kolei na oba pady przycisku tap.
 
   Oczekiwany wynik:
-  - jeden pad: ~3.3V — to jest **tap_pin** (pin MCU)
+  - jeden pad: **2,5–5V** (zwykle ~3.3V) — to jest **tap_pin** (pin MCU)
   - drugi pad: 0V — to jest **GND_ped**
 
   Wciśnij TAP i trzymaj: tap_pin spada do ~0V ✓
+
+  **Prąd zwarcia tap_pin (siła pull-upu):** przełącz multimetr na prąd stały mA (zakres 2 mA lub 20 mA; czerwony przewód w gnieździe mA). Czerwona sonda na tap_pin, czarna na GND_ped — to elektrycznie to samo co wciśnięcie TAP. Odczyt:
+  - **≤ 0,5 mA** ✓ — mod zadziała z zapasem
+  - **> 0,5 mA** → STOP: pull-up jest mocniejszy, niż zakłada projekt (impulsy mogą być za słabe). Zapisz wynik i nie kupuj elementów.
+
+  Przełącz multimetr z powrotem na pomiar napięcia i przełóż czerwony przewód do gniazda V.
 
   Sfotografuj i zaznacz markerem, który pad to tap_pin, a który GND_ped.
 
@@ -55,15 +61,25 @@
 
 - [ ] **Krok 7: Zmierz napięcie na padach tap**
 
-  Podłącz zasilanie pedału. Multimetr na DC 20V. Czarna sonda na GND pedału (np. tuleja gniazda audio). Czerwona sonda po kolei na oba pady.
+  Podłącz zasilanie pedału. Multimetr na DC 20V. Czarną sondę przypnij krokodylkiem do GND pedału (np. tuleja gniazda audio) — sonda zsunięta na sąsiedni element włączonej płytki może ją uszkodzić. Czerwona sonda po kolei na oba pady przycisku tap.
 
-  Oczekiwany wynik: jeden pad ~3.3V (**tap_pin**), drugi 0V (**GND_ped**). Wciśnij TAP i trzymaj: tap_pin spada do ~0V ✓
+  Oczekiwany wynik:
+  - jeden pad: **2,5–5V** (zwykle ~3.3V) — to jest **tap_pin** (pin MCU)
+  - drugi pad: 0V — to jest **GND_ped**
+
+  Wciśnij TAP i trzymaj: tap_pin spada do ~0V ✓
+
+  **Prąd zwarcia tap_pin (siła pull-upu):** przełącz multimetr na prąd stały mA (zakres 2 mA lub 20 mA; czerwony przewód w gnieździe mA). Czerwona sonda na tap_pin, czarna na GND_ped — to elektrycznie to samo co wciśnięcie TAP. Odczyt:
+  - **≤ 0,5 mA** ✓ — mod zadziała z zapasem
+  - **> 0,5 mA** → STOP: pull-up jest mocniejszy, niż zakłada projekt (impulsy mogą być za słabe). Zapisz wynik i nie kupuj elementów.
+
+  Przełącz multimetr z powrotem na pomiar napięcia i przełóż czerwony przewód do gniazda V.
 
   Sfotografuj i zaznacz markerem.
 
 - [ ] **Krok 8: Odłącz zasilanie i zamknij Cathedral tymczasowo**
 
-- [ ] **✓ Punkt przerwy 1:** W obu pedałach znasz tap_pin (~3.3V, spada do ~0V przy wciśnięciu) i GND_ped. Wyniki i zdjęcia zapisane. Jeśli którykolwiek pedał zachowuje się inaczej — STOP, nie kupuj elementów.
+- [ ] **✓ Punkt przerwy 1:** W obu pedałach znasz tap_pin (2,5–5V, spada do ~0V przy wciśnięciu, prąd zwarcia ≤ 0,5 mA) i GND_ped. Wyniki i zdjęcia zapisane. Jeśli którykolwiek pedał zachowuje się inaczej — STOP, nie kupuj elementów.
 
 ---
 
@@ -139,7 +155,7 @@ Budujesz dwa identyczne perfboardy (jeden na pedał). Na każdym są dwa tory: *
     │ ═══ szyna GND_mod ════════════════════════════════════   ┊   (szyna) ║ │
     └───────────────────────────────────────────────────────────────────────┘
       strona modulara (lewo)                     ┊ OC: piny 1-2 w lewo, 3-4 w prawo
-                                                 ┊ ≥ 4 puste kolumny między GND_mod a GND_ped
+                                                 ┊ ≥ 4 otwory odstępu między GND_mod a GND_ped (poza pinami OC)
 
 **Lista połączeń toru A/B** (zgodna z tabelą „Połączenia toru” w spec.md):
 
@@ -169,7 +185,9 @@ Elementy: R1, R3 = 100kΩ · R5, R6, R7, R8 = 47kΩ · R2, R4 = 470Ω 0,6 W · C
 
 - [ ] **Krok 1: Przygotuj perfboard**
 
-  Perfboard 5×7 cm. Markerem zaznacz: szynę GND_mod (górna i dolna krawędź, strona lewa), szynę GND_ped (prawa krawędź) i pustą strefę ≥ 4 kolumn między nimi. Podpisz szyny.
+  Perfboard 5×7 cm. Markerem zaznacz: szynę GND_mod (górna i dolna krawędź, strona lewa), szynę GND_ped (prawa krawędź) i pustą strefę między nimi: poza pinami OC1/OC2 żadna ścieżka ani drut strony modulara nie może być bliżej niż 4 otwory od strony pedału. (Między rzędami pinów samego PC817 są tylko 2 otwory — to normalne, nóżek nie rozginaj.) Podpisz szyny.
+
+  **Uwaga:** szkic pokazuje stronę elementów. Od strony lutowania (miedź) układ jest w lustrzanym odbiciu.
 
 - [ ] **Krok 2: Przylutuj szyny**
 
@@ -181,7 +199,7 @@ Elementy: R1, R3 = 100kΩ · R5, R6, R7, R8 = 47kΩ · R2, R4 = 470Ω 0,6 W · C
 
 - [ ] **Krok 4: Wlutuj R2, R4 (470Ω 0,6 W) i diody D1, D2**
 
-  R2: jedna nóżka przy pin 1 OC1, druga nóżka w miejscu węzła in_AB (pozostałe elementy węzła in_AB dołożysz w Krokach 7–8). D1 **równolegle do LED, odwrotnie**: **pasek (katoda) do pin 1**, drugi koniec (anoda) do pin 2. To samo w torze C: R4, D2, OC2.
+  R2: jedna nóżka przy pin 1 OC1; od drugiej nóżki poprowadzisz drut do węzła in_AB (w Kroku 8, gdy węzeł in_AB będzie gotowy). D1 **równolegle do LED, odwrotnie**: **pasek (katoda) do pin 1**, drugi koniec (anoda) do pin 2. To samo w torze C: R4, D2, OC2.
 
 - [ ] **Test diod przy PC817 (zaraz po wlutowaniu D1/D2!)**
 
@@ -303,7 +321,7 @@ Wykonaj dla każdego pedału osobno. Zacznij od SMMH.
 
 - [ ] **Krok 1: Przylutuj przewody do padów tap SMMH**
 
-  Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów. W Kroku 6 oba trafią na terminale REC razem z drutami z perfboardu.
+  Odłącz zasilanie pedału (wyjmij wtyk zasilacza). Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów. W Kroku 6 oba trafią na terminale REC razem z drutami z perfboardu.
 
 - [ ] **Krok 2: Zidentyfikuj wyprowadzenia gniazd PJ398SM (przed lutowaniem!)**
 
@@ -348,9 +366,10 @@ Wykonaj dla każdego pedału osobno. Zacznij od SMMH.
 
   - Najpierw sprawdź sondy: goły metal obudowy (śruba dna lub tuleja gniazda audio pedału) ↔ pad GND_ped → **piknięcie** ✓. Jeśli nie piknie — szukaj punktu z gołym metalem (lakier i anodowanie izolują).
   - GND_mod (sleeve dowolnego jacka CV) ↔ ten sam punkt obudowy → **brak piknięcia** ✓.
-  - Tip każdego jacka CV ↔ ten sam punkt obudowy → **brak piknięcia** ✓.
+  - Tip każdego jacka CV ↔ ten sam punkt obudowy → **brak piknięcia** ✓ (dla jacków A i B sprawdź przy SELECT na A i na B).
+  - **Test z wtykiem:** wsuń kabel patch do końca do jacka A. Sonda na tulei wtyku na **drugim końcu** kabla ↔ ten sam punkt obudowy → **brak piknięcia** ✓. Poruszaj wtykiem w gnieździe w trakcie pomiaru. Powtórz dla jacków B i C. (Metalowy wtyk może dotykać nakrętki gniazda, która styka się z obudową.)
 
-  Jeśli piknie — coś ze strony modulara dotyka obudowy (najczęściej gniazdo lub drut przy otworze). Znajdź i odizoluj.
+  Jeśli piknie — coś ze strony modulara dotyka obudowy (gniazdo, drut przy otworze albo wtyk o nakrętkę). Znajdź i odizoluj; przy wtyku: podkładka izolacyjna pod nakrętkę albo kabel z plastikową tuleją wtyku.
 
 - [ ] **✓ Punkt przerwy 6:** SMMH złożony, wszystkie połączenia wykonane, izolacja potwierdzona.
 
@@ -365,11 +384,11 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 - [ ] **Krok 3: Wejścia A i B** — +5V przez rezystor 1kΩ na tip jacka A, minus na sleeve, SELECT na A, GATE/TRIG na TRIG. Dotknij i puść kilka razy w równym tempie → SMMH ustawia czas delay ✓. Powtórz dla jacka B z SELECT na B ✓.
 - [ ] **Krok 4: Minimalny impuls (najważniejszy pomiar!)** — sekwencer z regulowaną długością gate → wejście A, GATE/TRIG na **GATE**. Zacznij od gate 50 ms i skracaj (50 → 20 → 10 → 5 → 2 → 1 ms). Przy każdej długości zmień tempo sekwencera (np. 120 → 80 BPM): tap jest łapany, gdy czas delay podąża za tempem. Zapisz najkrótszy gate, który SMMH jeszcze łapie. Jeśli oscyloskopem możesz zmierzyć długość gate — zmierz.
   - wynik ≤ 10 ms → OK, zostaje 0.22µF ✓
-  - wynik > 10 ms → wymień C1 i C2 na **0.33µF** (zapas z zakupów) i powtórz Kroki 2, 3 i 5
+  - wynik > 10 ms → wymień C1 i C2 na **0.33µF** (zapas z zakupów) i powtórz Kroki 2, 3 i 5 — tylko jeśli Twoje moduły mają typowe wyjścia (do ~1 kΩ); w razie wątpliwości opisz wynik przed wymianą
   Wynik dopisz do spec.md, sekcja „Wymagania czasowe pedałów”.
 - [ ] **Krok 5: Próg przytrzymania** — GATE/TRIG na **TRIG**, gate 3 s na wejście A → SMMH robi **jeden tap**, nie nagrywa pętli ✓. To samo na wejściu C ✓. Przełącz na **GATE** → gate 3 s nagrywa pętlę ✓ (zgodnie z zamierzeniem).
 - [ ] **Krok 6: Tempo z sekwencera** — zegar 120 BPM (gate 50%) na wejście C → delay synchronizuje się z tempem ✓. Powtórz z gate 90% przy 300 BPM → każdy krok łapany ✓.
-- [ ] **Krok 7: Brak humu** — SMMH do wzmacniacza, modular podłączony do jacka C, cisza na wejściu gitary → brak humu i brzęczenia ✓.
+- [ ] **Krok 7: Brak humu** — SMMH do wzmacniacza, kable z modulara wpięte z wtykiem do wszystkich trzech jacków (A, B, C), zegar modulara działa, cisza na wejściu gitary → brak humu, brzęczenia i tykania w rytm zegara ✓.
 
 - [ ] **✓ Punkt przerwy 7:** SMMH działa, minimalny impuls zapisany. Zamknij obudowę.
 
@@ -381,7 +400,7 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 
 - [ ] **Krok 1: Przylutuj przewody do padów tap Cathedral**
 
-  Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów.
+  Odłącz zasilanie pedału (wyjmij wtyk zasilacza). Na padach zaznaczonych w Zadaniu 1: czerwony przewód do tap_pin, czarny do GND_ped — tak długie, żeby sięgnęły do przełącznika REC. Minimum cyny, nie ruszaj sąsiednich elementów.
 
 - [ ] **Krok 2: Zidentyfikuj wyprowadzenia gniazd PJ398SM (przed lutowaniem!)**
 
@@ -423,9 +442,10 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 
   - Najpierw sprawdź sondy: goły metal obudowy (śruba dna lub tuleja gniazda audio pedału) ↔ pad GND_ped → **piknięcie** ✓.
   - GND_mod (sleeve dowolnego jacka CV) ↔ ten sam punkt obudowy → **brak piknięcia** ✓.
-  - Tip każdego jacka CV ↔ ten sam punkt obudowy → **brak piknięcia** ✓.
+  - Tip każdego jacka CV ↔ ten sam punkt obudowy → **brak piknięcia** ✓ (dla jacków A i B sprawdź przy SELECT na A i na B).
+  - **Test z wtykiem:** wsuń kabel patch do końca do jacka A. Sonda na tulei wtyku na **drugim końcu** kabla ↔ ten sam punkt obudowy → **brak piknięcia** ✓. Poruszaj wtykiem w gnieździe w trakcie pomiaru. Powtórz dla jacków B i C. (Metalowy wtyk może dotykać nakrętki gniazda, która styka się z obudową.)
 
-  Jeśli piknie — znajdź i odizoluj.
+  Jeśli piknie — coś ze strony modulara dotyka obudowy (gniazdo, drut przy otworze albo wtyk o nakrętkę). Znajdź i odizoluj; przy wtyku: podkładka izolacyjna pod nakrętkę albo kabel z plastikową tuleją wtyku.
 
 ### Testy
 
@@ -436,11 +456,11 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 - [ ] **Krok 11: Wejścia A i B** — +5V przez rezystor 1kΩ na tip jacka A, minus na sleeve, SELECT na A, GATE/TRIG na TRIG. Dotknij i puść kilka razy w równym tempie → Cathedral ustawia pre-delay ✓. Powtórz dla jacka B z SELECT na B ✓.
 - [ ] **Krok 12: Minimalny impuls** — sekwencer z regulowaną długością gate → wejście A, GATE/TRIG na **GATE**. Skracaj gate 50 → 20 → 10 → 5 → 2 → 1 ms. Przy każdej długości zmień tempo sekwencera (np. 120 → 80 BPM): tap jest łapany, gdy pre-delay podąża za tempem. Zapisz najkrótszy gate rozpoznawany jako tap.
   - wynik ≤ 10 ms → OK ✓
-  - wynik > 10 ms → wymień C1 i C2 w Cathedral na **0.33µF** i powtórz Kroki 10, 11 i 13
+  - wynik > 10 ms → wymień C1 i C2 w Cathedral na **0.33µF** i powtórz Kroki 10, 11 i 13 — tylko przy modułach z typowymi wyjściami (do ~1 kΩ); w razie wątpliwości opisz wynik przed wymianą
   Wynik dopisz do spec.md, sekcja „Wymagania czasowe pedałów”.
 - [ ] **Krok 13: Próg przytrzymania** — GATE/TRIG na **TRIG**, gate 3 s na wejście A → **jeden tap, bez infinite** ✓. To samo na wejściu C ✓. Przełącz na **GATE** → gate 3 s włącza infinite ✓.
 - [ ] **Krok 14: Tempo z sekwencera** — zegar 120 BPM (gate 50%) na wejście C → pre-delay synchronizuje się ✓. Powtórz z gate 90% przy 300 BPM → każdy krok łapany ✓.
-- [ ] **Krok 15: Brak humu** — Cathedral do wzmacniacza, modular podłączony do jacka C → brak humu ✓.
+- [ ] **Krok 15: Brak humu** — Cathedral do wzmacniacza, kable z modulara wpięte z wtykiem do wszystkich trzech jacków, zegar modulara działa → brak humu i tykania w rytm zegara ✓.
 
   **Uwaga:** podczas tapowania reverb krótko się urywa — to zachowanie firmware Cathedral, nie błąd moda.
 
@@ -460,7 +480,8 @@ Przed włączeniem zasilania: REC w pozycji OFF.
 | Tap nie działa w ogóle | Zamienione tap_pin i GND_ped | Zmierz ponownie pady (Zadanie 1) |
 | Wejście nie reaguje wcale | Przylutowany styk przełączany gniazda zamiast tip | Identyfikacja wyprowadzeń: Zadanie 6 Krok 2 (SMMH) / Zadanie 8 Krok 2 (Cathedral) |
 | Pedał wchodzi w looper / infinite w trybie TRIG | GATE/TRIG opisany odwrotnie, zwarty albo C1 zwarty | Zadanie 6 / Zadanie 8, Krok 4; sprawdź C1 |
-| Hum po podłączeniu modulara | GND_mod dotyka obudowy lub GND_ped | Zadanie 6 / Zadanie 8, Krok 8 |
+| Hum po podłączeniu modulara | GND_mod dotyka obudowy lub GND_ped; metalowy wtyk dotyka nakrętki gniazda; niezdjęte połączenie mas z testu na stole | Zadanie 6 / Zadanie 8, Krok 8 (także test z wtykiem) |
+| Działa z jednym modułem, z innym nie | Moduł ma dużą rezystancję wyjścia (> ~2 kΩ) albo niską amplitudę gate | Użyj innego wyjścia/modułu albo wzmacniacza/bufora gate; nie przechodź na 0.33µF z takim modułem |
 | R2 gorący | Długi sygnał ±12V — normalne do ~0,2 W | Sprawdź, czy R2 to 0,6 W, nie 1/4 W |
 
 ---

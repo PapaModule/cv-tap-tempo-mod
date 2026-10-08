@@ -9,12 +9,12 @@ import check_docs  # noqa: E402
 
 CLEAN_README = (
     "0.22µF BC547B 470Ω 0,6 W 47kΩ 100kΩ GATE/TRIG DO-35 DIP-4 ±10V "
-    "spec.md plan.md filtr HP SW_HP impuls ~15–135 ms\n"
+    "spec.md plan.md filtr HP SW_HP impuls ~15–133 ms rezystancja wyjścia modułu\n"
 )
 CLEAN_PLAN = (
     "0.22µF 0.33µF BC547B 0,6 W 47kΩ 100kΩ GATE/TRIG DO-35 DIP-4 5×7 "
     "Minimalny impuls Próg przytrzymania GND_mod GND_ped antyparalel "
-    "rezystor 1kΩ i 10kΩ do testów R7 R8\n"
+    "rezystor 1kΩ i 10kΩ do testów R7 R8 prąd zwarcia z wtykiem Odłącz zasilanie pedału\n"
 )
 CLEAN_SVG = (
     '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg">'
@@ -88,6 +88,18 @@ class CheckDocsTest(unittest.TestCase):
         self.write("plan.md", CLEAN_PLAN.replace(" R7 R8", ""))
         self.assert_flagged("schematic.svg", "R7")
         self.assert_flagged("plan.md", "R8")
+
+    def test_final_review_safety_steps_required(self):
+        self.write("plan.md", CLEAN_PLAN.replace(" prąd zwarcia z wtykiem Odłącz zasilanie pedału", ""))
+        self.write("README.md", CLEAN_README.replace(" rezystancja wyjścia modułu", ""))
+        self.assert_flagged("plan.md", "zwarcia")
+        self.assert_flagged("plan.md", "wtykiem")
+        self.assert_flagged("plan.md", "zasilanie")
+        self.assert_flagged("README.md", "rezystancj")
+
+    def test_podlacz_does_not_satisfy_odlacz(self):
+        self.write("plan.md", CLEAN_PLAN.replace("Odłącz zasilanie pedału", "Podłącz zasilanie pedału"))
+        self.assert_flagged("plan.md", "zasilanie")
 
     def test_svg_forbidden_value_as_entity_flagged(self):
         self.write("schematic.svg", CLEAN_SVG.replace("</svg>", "<text>0.1&#181;F</text></svg>"))

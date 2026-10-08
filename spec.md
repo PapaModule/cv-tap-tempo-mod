@@ -154,6 +154,15 @@ Założenia tabel nominalnych: tap aktywny, gdy prąd LED > 1 mA (PC817 nie jest
 | 0,33 µF (zapasowa) | 22–199 ms | 19–243 ms |
 | 0,47 µF (odrzucona) | 32–283 ms | 27–346 ms — praktycznie bez zapasu do 350 ms |
 
+**Granica: rezystancja wyjścia modułu.** Wszystkie zakresy powyżej zakładają Rs ≤ 1 kΩ (typowe wyjścia Eurorack: 0–1 kΩ). Przy wyższej Rs (BC547B, `sim/run.sh`):
+
+| Rs | 5V: prąd LED / tap | 12V, C+10%, próg 0,1 mA: najdłuższy impuls (0,22 µF / 0,33 µF) |
+|---|---|---|
+| 2,2 kΩ | 1,13 mA — na granicy progu 1 mA | 184 ms / 276 ms |
+| 4,7 kΩ | 0,57 mA — brak tapu | 224 ms / 337 ms — tylko 4% poniżej 350 ms |
+
+Wniosek: moduły o rezystancji wyjścia > ~2 kΩ mogą nie działać przy 5V, a z kondensatorem zapasowym 0,33 µF i źródłem 12V o wysokiej Rs zapas do progu infinite (Cathedral) praktycznie znika — 0,33 µF stosować tylko z wyjściami ≤ 1 kΩ.
+
 Wartości z `sim/run.sh` (z R7 = 47 kΩ), zaokrąglone na zewnątrz: minima w dół, maksima w górę. Wniosek: z 0,22 µF maksimum jest ≥2,6× poniżej 350 ms dla grupy B (≥2,1× dla dowolnej grupy). W BOM: **BC547B**.
 
 Prostokąt bipolarny (skok z −V na +V, a nie od 0V) daje dłuższy impuls: najgorzej 168 ms przy ±12V, Rs = 1kΩ, hFE 800, C+10%, progu 0,1 mA — nadal ≥2× poniżej 350 ms.
@@ -167,7 +176,7 @@ Prostokąt bipolarny (skok z −V na +V, a nie od 0V) daje dłuższy impuls: naj
 | 12V | 21 mA | 6,7 mA |
 
 - Max prąd LED PC817 (abs. max): 50 mA — zapas wystarczający także przy 12V bez rezystora wyjściowego.
-- CTR PC817: wg datasheetu min. 50% (nierangowany, do potwierdzenia w datasheecie dostawcy) — przy 2 mA LED fototranzystor może przewodzić ≥1 mA, wielokrotnie więcej niż prąd pull-upu MCU (ułamek mA). Potwierdza to test w plan.md.
+- CTR PC817: wg datasheetu min. 50% (nierangowany, do potwierdzenia w datasheecie dostawcy) — przy 2 mA LED fototranzystor może przewodzić ≥1 mA, więcej niż prąd pull-upu MCU, jeśli ten wynosi ≤ 0,5 mA (mierzone w plan.md, Zadanie 1). Potwierdza to test w plan.md.
 - **R2 = 470Ω zostaje.** Zmniejszenie do 330/220Ω przy module 1kΩ zwiększa prąd LED tylko o 0,2–0,4 mA (ogranicza go rezystor w module), a przy module bez rezystora podnosi prąd do 30–45 mA (blisko limitu LED i wydajności op-ampów).
 
 **Przypadki brzegowe (Rs = 1kΩ, 5V i 10V) — wszystkie tapy rejestrowane:**
@@ -232,7 +241,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 
 ## Weryfikacja
 
-- **Tap pedałów:** tap_pin siedzi na ~3.3V, wciśnięcie zwiera do GND — do potwierdzenia pomiarem w obu pedałach (plan.md, Zadanie 1) przed montażem.
+- **Tap pedałów:** tap_pin siedzi na ~3.3V (akceptowane 2,5–5V), wciśnięcie zwiera do GND, a prąd zwarcia (siła pull-upu MCU) musi wynosić ≤ 0,5 mA — wtedy fototranzystor PC817 (CTR ≥ 50%) wystarcza już przy ~1 mA prądu LED, czyli przy progu przyjętym w symulacjach. Do potwierdzenia pomiarem w obu pedałach (plan.md, Zadanie 1) przed zakupami; > 0,5 mA → STOP.
 - **Izolacja:** PC817 zapewnia izolację galwaniczną — pod warunkiem kontroli z punktu 7 montażu.
 - **Symulacja:** wszystkie liczby z sekcji „Parametry” odtwarzane przez `sim/run.sh` (ngspice). Ograniczenia modelu: LED PC817 modelowana behawioralnie (Vf ~1,2V @ 10 mA), fototranzystor niemodelowany — próg tapu przyjęty jako I_LED > 1 mA, a wpływ niższego progu (0,1 mA) i rozrzutu hFE sprawdzony w tabeli „Rozrzut”.
 - **Testy funkcjonalne wymagane w plan.md:**
@@ -249,6 +258,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 - **Tryb GATE:** gate dłuższy niż 350 ms (Cathedral) / 0,5 s (SMMH) zadziała jak przytrzymanie — celowe
 - **Wolne LFO (sinus) w trybie TRIG:** łagodne zbocze daje słaby impuls (symulacja: prąd LED ~1,8 mA przy ±10V 1 Hz) — tap może być niepewny. Do sterowania z LFO używać trybu GATE albo sygnału prostokątnego.
 - **Obciążenie modułu:** do 21 mA przy ±12V z wyjścia bez rezystora — bezpieczne dla typowych wyjść Eurorack, ale moduł z bardzo słabym wyjściem może obniżyć napięcie.
+- **Rezystancja wyjścia modułu:** zakresy impulsów obowiązują dla Rs ≤ 1 kΩ; przy > ~2 kΩ i 5V tap może nie zadziałać (patrz „Granica: rezystancja wyjścia modułu”).
 - **Długość impulsu TRIG zależy od amplitudy CV, wyjścia modułu i rozrzutu elementów** (15–133 ms z BC547B) — mieści się w wymaganiach dla wszystkich typowych źródeł
 
 ---
