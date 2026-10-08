@@ -3,7 +3,7 @@
 **Data:** 2026-05-29  
 **Aktualizacja:** 2026-06-04 — izolacja galwaniczna (BC547 → PC817)  
 **Aktualizacja:** 2026-10-08 — v3: tranzystor w torze LED (filtr HP v2 dawał impuls ~0,1 ms), ujednolicona dioda antyparalel, przełącznik GATE/TRIG, poprawione testy  
-**Status:** Do akceptacji
+**Status:** Zatwierdzone (2026-10-08)
 
 ---
 
