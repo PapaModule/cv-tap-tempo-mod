@@ -43,7 +43,7 @@ REQUIRED = {
         rf"0[.,]22 ?{MU}F", rf"0[.,]33 ?{MU}F", r"BC547B", r"0,6 ?W", rf"47 ?k{OHM}", rf"100 ?k{OHM}",
         r"GATE/TRIG", r"DO-35", r"DIP-4", r"5×7", r"[Mm]inimalny impuls",
         r"[Pp]róg przytrzymania", r"GND_mod", r"GND_ped", r"antyparalel",
-        r"\bR7\b", r"\bR8\b", r"[Pp]rąd zwarcia", r"z wtykiem", r"\b[Oo]dłącz zasilanie pedału",
+        r"\bR7\b", r"\bR8\b", r"[Pp]rąd zwarcia", r"z wtykiem", r"\b[Oo]dłącz zasilanie pedału", r"[Ww]olne miejsce",
     ],
     "schematic.svg": [
         rf"0[.,]22 ?{MU}F", rf"470 ?{OHM}", rf"47 ?k{OHM}", rf"100 ?k{OHM}", r"BC547B",

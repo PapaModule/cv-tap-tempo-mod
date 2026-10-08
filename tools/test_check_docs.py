@@ -14,7 +14,7 @@ CLEAN_README = (
 CLEAN_PLAN = (
     "0.22µF 0.33µF BC547B 0,6 W 47kΩ 100kΩ GATE/TRIG DO-35 DIP-4 5×7 "
     "Minimalny impuls Próg przytrzymania GND_mod GND_ped antyparalel "
-    "rezystor 1kΩ i 10kΩ do testów R7 R8 prąd zwarcia z wtykiem Odłącz zasilanie pedału\n"
+    "rezystor 1kΩ i 10kΩ do testów R7 R8 prąd zwarcia z wtykiem Odłącz zasilanie pedału wolne miejsce\n"
 )
 CLEAN_SVG = (
     '<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg">'
@@ -96,6 +96,10 @@ class CheckDocsTest(unittest.TestCase):
         self.assert_flagged("plan.md", "wtykiem")
         self.assert_flagged("plan.md", "zasilanie")
         self.assert_flagged("README.md", "rezystancj")
+
+    def test_space_measurement_required_in_plan(self):
+        self.write("plan.md", CLEAN_PLAN.replace(" wolne miejsce", ""))
+        self.assert_flagged("plan.md", "miejsce")
 
     def test_podlacz_does_not_satisfy_odlacz(self):
         self.write("plan.md", CLEAN_PLAN.replace("Odłącz zasilanie pedału", "Podłącz zasilanie pedału"))

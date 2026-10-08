@@ -229,7 +229,7 @@ Tor C: C2, R3, R6, R4, R8, D2, D4, Q2, OC2 — numeracja analogiczna do toru A/B
 
 ## Montaż
 
-1. Wywiercić otwory w obudowie pedału na 3 gniazda 3.5mm i 3 przełączniki
+1. Zmierzyć wolne miejsce w środku (plan.md, Zadanie 1: perfboard ≥ 50×70×15 mm, za ścianką ≥ 25 mm na toggle i ≥ 12 mm na gniazdo), potem wywiercić otwory w obudowie pedału na 3 gniazda 3.5mm i 3 przełączniki — mod montowany wewnątrz obudowy
 2. Zmontować obwód na perfboardzie (dwie oddzielne szyny GND_mod i GND_ped)
 3. Zlokalizować na PCB pedału punkty lutownicze przycisku tap (dwa pady: tap_pin i GND_ped)
 4. Podłączyć pin 4 (C) PC817 do tap_pin, pin 3 (E) do GND_pedału

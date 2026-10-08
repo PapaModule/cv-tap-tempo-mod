@@ -15,7 +15,7 @@
 
 ---
 
-## Zadanie 1: Pomiar padów tap w obu pedałach
+## Zadanie 1: Pomiar padów tap i wolnego miejsca w obu pedałach
 
 **Dlaczego najpierw:** od tego zależy cały mod — jeśli pad tap nie siedzi na ~3.3V lub wciśnięcie nie zwiera go do GND, zatrzymaj się i opisz wynik zanim cokolwiek kupisz.
 
@@ -47,7 +47,22 @@
 
   Sfotografuj i zaznacz markerem, który pad to tap_pin, a który GND_ped.
 
-- [ ] **Krok 4: Odłącz zasilanie i zamknij SMMH tymczasowo**
+- [ ] **Krok 4: Odłącz zasilanie pedału, zmierz wolne miejsce w środku i zamknij SMMH tymczasowo**
+
+  Mod montujemy **wewnątrz** obudowy, więc trzeba potwierdzić, że zmieści się płytka i 6 otworów (3 gniazda + 3 przełączniki). Wyjmij wtyk zasilacza. Mierz suwmiarką lub linijką, wyniki wpisz do tabeli „Wolne miejsce” poniżej.
+
+  **a) Miejsce na perfboard** — znajdź płaskie miejsce, gdzie płytka może leżeć na taśmie piankowej i niczego nie dotykać (np. dno obudowy obok płytki pedału albo wewnętrzna strona pokrywy, jeśli po zamknięciu nic na nią nie naciska):
+  - potrzebne: **≥ 50 × 70 mm** powierzchni (minimum awaryjne ~30 × 50 mm — wtedy dobiorę ciaśniejszy układ)
+  - i **≥ 15 mm** wolnej wysokości (elementy ~12 mm + taśma), licząc z zamkniętą obudową
+
+  **b) Miejsca na 6 otworów w ściankach** — obejrzyj każdą ściankę od środka (lewą, prawą, tylną; przednią tylko jeśli jest pusta). Dla każdej strefy, gdzie chcesz wiercić, zmierz:
+  - **głębokość wolną za ścianką:** ≥ **25 mm** dla przełącznika toggle (korpus + nóżki do lutowania), ≥ **12 mm** dla gniazda PJ398SM
+  - **odstęp od elementów:** nic (płytka pedału, potencjometr, gniazdo audio/zasilania, footswitch, przewody) bliżej niż ~5 mm od korpusu nowego elementu
+  - **rozstaw:** środki sąsiednich otworów co najmniej ~15 mm od siebie i ~10 mm od krawędzi/narożnika obudowy oraz od miejsca, gdzie przykręca się dno
+
+  **c) Zdjęcia:** płytka pedału z góry z linijką w kadrze + każda ścianka od środka.
+
+  Zamknij obudowę.
 
 ### Cathedral
 
@@ -77,9 +92,33 @@
 
   Sfotografuj i zaznacz markerem.
 
-- [ ] **Krok 8: Odłącz zasilanie i zamknij Cathedral tymczasowo**
+- [ ] **Krok 8: Odłącz zasilanie pedału, zmierz wolne miejsce w środku i zamknij Cathedral tymczasowo**
 
-- [ ] **✓ Punkt przerwy 1:** W obu pedałach znasz tap_pin (2,5–5V, spada do ~0V przy wciśnięciu, prąd zwarcia ≤ 0,5 mA) i GND_ped. Wyniki i zdjęcia zapisane. Jeśli którykolwiek pedał zachowuje się inaczej — STOP, nie kupuj elementów.
+  Mod montujemy **wewnątrz** obudowy, więc trzeba potwierdzić, że zmieści się płytka i 6 otworów (3 gniazda + 3 przełączniki). Wyjmij wtyk zasilacza. Mierz suwmiarką lub linijką, wyniki wpisz do tabeli „Wolne miejsce” poniżej.
+
+  **a) Miejsce na perfboard** — znajdź płaskie miejsce, gdzie płytka może leżeć na taśmie piankowej i niczego nie dotykać (np. dno obudowy obok płytki pedału albo wewnętrzna strona pokrywy, jeśli po zamknięciu nic na nią nie naciska):
+  - potrzebne: **≥ 50 × 70 mm** powierzchni (minimum awaryjne ~30 × 50 mm — wtedy dobiorę ciaśniejszy układ)
+  - i **≥ 15 mm** wolnej wysokości (elementy ~12 mm + taśma), licząc z zamkniętą obudową
+
+  **b) Miejsca na 6 otworów w ściankach** — obejrzyj każdą ściankę od środka (lewą, prawą, tylną; przednią tylko jeśli jest pusta). Dla każdej strefy, gdzie chcesz wiercić, zmierz:
+  - **głębokość wolną za ścianką:** ≥ **25 mm** dla przełącznika toggle (korpus + nóżki do lutowania), ≥ **12 mm** dla gniazda PJ398SM
+  - **odstęp od elementów:** nic (płytka pedału, potencjometr, gniazdo audio/zasilania, footswitch, przewody) bliżej niż ~5 mm od korpusu nowego elementu
+  - **rozstaw:** środki sąsiednich otworów co najmniej ~15 mm od siebie i ~10 mm od krawędzi/narożnika obudowy oraz od miejsca, gdzie przykręca się dno
+
+  **c) Zdjęcia:** płytka pedału z góry z linijką w kadrze + każda ścianka od środka.
+
+  Zamknij obudowę.
+
+**Wolne miejsce — wyniki pomiarów** (wypełnij ołówkiem):
+
+| | SMMH | Cathedral |
+|---|---|---|
+| Miejsce na perfboard (szer. × dł. × wys., mm) | | |
+| Ścianka i strefa na 3 przełączniki (głębokość za ścianką, mm) | | |
+| Ścianka i strefa na 3 gniazda (głębokość za ścianką, mm) | | |
+| Zdjęcia zrobione (tak/nie) | | |
+
+- [ ] **✓ Punkt przerwy 1:** W obu pedałach znasz tap_pin (2,5–5V, spada do ~0V przy wciśnięciu, prąd zwarcia ≤ 0,5 mA) i GND_ped, a tabela „Wolne miejsce” jest wypełniona i spełnia wymagania z Kroków 4 i 8. Wyniki i zdjęcia zapisane. Jeśli którykolwiek pomiar nie spełnia wymagań — STOP, nie kupuj elementów; prześlij wymiary i zdjęcia, dobiorę układ (np. mniejszy perfboard albo inne rozłożenie otworów).
 
 ---
 
@@ -289,7 +328,7 @@ Wykonaj dla każdego pedału osobno. Zacznij od SMMH.
 
 - [ ] **Krok 1: Zaplanuj rozmieszczenie otworów**
 
-  Narysuj ołówkiem / na taśmie malarskiej:
+  Korzystaj z tabeli „Wolne miejsce” i zdjęć z Zadania 1 — wiercisz tylko w strefach, które tam zmierzyłeś. Narysuj ołówkiem / na taśmie malarskiej:
   - 3× otwór na gniazda 3.5mm (PJ398SM — zwykle ~6 mm; zmierz suwmiarką gwint swoich gniazd)
   - 3× otwór na przełączniki toggle (gwint 6 mm — zwykle otwór ~6,5 mm; zmierz suwmiarką)
 
